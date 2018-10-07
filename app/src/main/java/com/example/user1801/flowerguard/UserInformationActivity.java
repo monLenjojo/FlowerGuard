@@ -4,13 +4,17 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 /**
  * Skeleton of an Android Things activity.
@@ -59,6 +63,11 @@ public class UserInformationActivity extends Activity {
                 case R.id.change_Name:
                     LayoutInflater layoutInflater = LayoutInflater.from(UserInformationActivity.this);
                     final View addNewView = layoutInflater.inflate(R.layout.alertdialog_input_text,null);
+                    TextView titleText = addNewView.findViewById(R.id.changeDataView_Title);
+                    titleText.setText("名稱");
+                    EditText editText = addNewView.findViewById(R.id.changeDataView_newText);
+                    editText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                    editText.setText(show_Name.getText());
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(UserInformationActivity.this);
                     alertDialog.setView(addNewView)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
