@@ -31,11 +31,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="200sp"
                 android:background="@null"
+                android:ems="10"
                 android:gravity="top"
-                android:inputType="none" />
-
-
+                android:inputType="textMultiLine"
+                android:singleLine="false" />
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

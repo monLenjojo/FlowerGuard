@@ -1,20 +1,31 @@
 package com.example.user1801.flowerguard;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
+
+import java.util.regex.Pattern;
 
 /**
  * Skeleton of an Android Things activity.
@@ -37,6 +48,7 @@ import org.w3c.dom.Text;
  */
 public class UserInformationActivity extends Activity {
     TextView show_Name,show_Phone,show_Address,show_Email;
+    ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,53 +58,165 @@ public class UserInformationActivity extends Activity {
         show_Phone = findViewById(R.id.ed_Phone);
         show_Address = findViewById(R.id.ed_Address);
         show_Email = findViewById(R.id.ed_Email);
+        imageView = findViewById(R.id.imageView);
         ImageButton ed_Name = findViewById(R.id.change_Name);
         ImageButton ed_Phone = findViewById(R.id.change_Phone);
         ImageButton ed_Address = findViewById(R.id.change_Address);
         ImageButton ed_Email = findViewById(R.id.change_Email);
-        ed_Name.setOnClickListener(clickListener);
-        ed_Phone.setOnClickListener(clickListener);
-        ed_Address.setOnClickListener(clickListener);
-        ed_Email.setOnClickListener(clickListener);
+        ed_Name.setOnClickListener(clickListener_changeButton);
+        ed_Phone.setOnClickListener(clickListener_changeButton);
+        ed_Address.setOnClickListener(clickListener_changeButton);
+        ed_Email.setOnClickListener(clickListener_changeButton);
+        imageView.setOnClickListener(clickListener);
     }
 
     View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.imageView:
+                    Toast.makeText(UserInformationActivity.this, "Touch here", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.setType("image/*").setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(intent,1);
+                    break;
+            }
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1:
+                switch (resultCode) {
+                    case RESULT_OK:
+                        if(data != null) {
+                            Uri uri = data.getData();
+                            imageView.setImageURI(uri);
+                        }
+                        break;
+                    case RESULT_CANCELED:
+                        break;
+                }
+                break;
+        }
+    }
+
+    View.OnClickListener clickListener_changeButton = new View.OnClickListener() {
+        @Override
+        public void onClick(final View view) {
+            LayoutInflater layoutInflater = LayoutInflater.from(UserInformationActivity.this);
+            final View addNewView = layoutInflater.inflate(R.layout.alertdialog_input_text,null);
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(UserInformationActivity.this);
+            TextView titleText = addNewView.findViewById(R.id.changeDataView_Title);
+            final EditText editText = addNewView.findViewById(R.id.changeDataView_newText);
             switch (view.getId()){
                 case R.id.change_Name:
-                    LayoutInflater layoutInflater = LayoutInflater.from(UserInformationActivity.this);
-                    final View addNewView = layoutInflater.inflate(R.layout.alertdialog_input_text,null);
-                    TextView titleText = addNewView.findViewById(R.id.changeDataView_Title);
                     titleText.setText("名稱");
-                    EditText editText = addNewView.findViewById(R.id.changeDataView_newText);
-                    editText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                    editText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
                     editText.setText(show_Name.getText());
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(UserInformationActivity.this);
+                    alertDialog.setView(addNewView)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                EditText newText = (EditText) addNewView.findViewById(R.id.changeDataView_newText);
+                                String str = newText.getText().toString();
+                                if(!TextUtils.isEmpty(str)){
+                                    if(!str.contains("@") & !str.contains(".")){
+                                        show_Name.setText(str);
+                                    }
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                editText.setEnabled(false);
+                                dialogInterface.cancel();
+                            }
+                        }).show();
+                    break;
+                case R.id.change_Email:
+                    titleText.setText("Email");
+                    editText.setText(show_Email.getText());
+                    alertDialog.setView(addNewView)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                EditText newText = (EditText) addNewView.findViewById(R.id.changeDataView_newText);
+                                String str = newText.getText().toString();
+                                if(!TextUtils.isEmpty(str)) {
+                                    if (Pattern.compile("[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$").matcher(str).matches()){
+                                        show_Email.setText(newText.getText().toString().trim());
+                                    }else{
+                                        Toast.makeText(UserInformationActivity.this, "Email格式錯誤呦!!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }else{
+                                    Toast.makeText(UserInformationActivity.this, "Email不可為空哦", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                editText.setEnabled(false);
+                                dialogInterface.cancel();
+                            }
+                        }).show();
+                    break;
+                case R.id.change_Phone:
+                    titleText.setText("電話");
+                    editText.setInputType(InputType.TYPE_CLASS_PHONE);
+                    editText.setText(show_Phone.getText());
                     alertDialog.setView(addNewView)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+                                public void onClick(DialogInterface dialog, int which) {
                                     EditText newText = (EditText) addNewView.findViewById(R.id.changeDataView_newText);
-                                    show_Name.setText(newText.getText().toString().trim());
+                                    String str = newText.getText().toString();
+                                    if(Pattern.compile("/^09\\d{2}-?\\d{3}-?\\d{3}$/").matcher(str).matches()){
+                                        show_Phone.setText(str.trim());
+                                    }else{
+                                        Toast.makeText(UserInformationActivity.this, "請輸入正確號碼哦", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.cancel();
-                                }
-                            });
-                    alertDialog.create().show();
-                    break;
-                case R.id.change_Email:
-                    break;
-                case R.id.change_Phone:
+                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            editText.setEnabled(false);
+                            dialog.cancel();
+                        }
+                    }).show();
                     break;
                 case R.id.change_Address:
+                    titleText.setText("地址");
+                    editText.setText(show_Address.getText());
+                    alertDialog.setView(addNewView)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    EditText newText = (EditText) addNewView.findViewById(R.id.changeDataView_newText);
+                                    String str = newText.getText().toString();
+                                    if(TextUtils.isEmpty(str)) {
+                                        if (str.trim().length() > 0) {
+                                            show_Address.setText(str);
+                                        }else{
+                                            Toast.makeText(UserInformationActivity.this, "地址不能空著哦", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }else{
+                                        Toast.makeText(UserInformationActivity.this, "地址不能空著哦", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            editText.setEnabled(false);
+                            dialog.cancel();
+                        }
+                    }).show();
                     break;
             }
-
         }
     };
 

@@ -323,9 +323,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             for (String credential : DUMMY_CREDENTIALS) {//該:用來取出集合（陣列）中每一個元素
-                Log.e("Look","credential : " + credential);
                 String[] pieces = credential.split(":");
-                Log.e("Look","credential : " + pieces);
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);

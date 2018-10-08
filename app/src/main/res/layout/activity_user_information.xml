@@ -31,11 +31,11 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="200sp"
-                android:layout_height="200sp"
+                android:layout_width="250sp"
+                android:layout_height="300sp"
                 android:adjustViewBounds="true"
                 android:cropToPadding="true"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:src="@drawable/icon_photo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
