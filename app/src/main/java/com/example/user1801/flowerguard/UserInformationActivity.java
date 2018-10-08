@@ -1,10 +1,14 @@
 package com.example.user1801.flowerguard;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +29,7 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.FileNotFoundException;
 import java.util.regex.Pattern;
 
 /**
@@ -93,7 +98,19 @@ public class UserInformationActivity extends Activity {
                     case RESULT_OK:
                         if(data != null) {
                             Uri uri = data.getData();
-                            imageView.setImageURI(uri);
+                            ContentResolver cr = this.getContentResolver();
+                            try{
+                                Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                                imageView.setImageBitmap(bitmap);
+                                SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);
+
+                                //得到SharedPreferences.Editor对象，并保存数据到该对象中
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("name", et_name.getText().toString().trim());
+                                editor.commit();
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
                         }
                         break;
                     case RESULT_CANCELED:
