@@ -190,10 +190,10 @@ public class UserInformationActivity extends Activity {
         setViewListener();
         sharedPreferences = getSharedPreferences("ImageFile", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        String newImage = sharedPreferences.getString("newImage", "noFile");
-        if (!newImage.equals("noFile")) {
+        String UserImage = sharedPreferences.getString("UserImage", "noFile");
+        if (!UserImage.equals("noFile")) {
             Log.d("ImageFile", "Is get old image");
-            byte[] decodeByte = Base64.decode(newImage, 0);
+            byte[] decodeByte = Base64.decode(UserImage, 0);
             imageView.setImageBitmap(BitmapFactory.decodeByteArray(decodeByte, 0, decodeByte.length));
         } else {
             Log.d("ImageFile", "Is no have old image");
@@ -240,7 +240,7 @@ public class UserInformationActivity extends Activity {
                                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                                         byte[] imageByte = baos.toByteArray();
                                         String imageEncoded = Base64.encodeToString(imageByte, Base64.DEFAULT);
-                                        editor.putString("newImage", imageEncoded);
+                                        editor.putString("UserImage", imageEncoded);
                                         editor.commit();
                                         imageView.post(new Runnable() {
                                             @Override
