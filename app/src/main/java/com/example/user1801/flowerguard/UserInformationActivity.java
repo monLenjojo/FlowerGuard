@@ -186,7 +186,7 @@ public class UserInformationActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_information);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        setViewId();
+        findView();
         setViewListener();
         sharedPreferences = getSharedPreferences("ImageFile", MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -209,7 +209,7 @@ public class UserInformationActivity extends Activity {
         imageView.setOnClickListener(clickListener);
     }
 
-    private void setViewId() {
+    private void findView() {
         show_Name = findViewById(R.id.ed_Name);
         show_Phone = findViewById(R.id.ed_Phone);
         show_Address = findViewById(R.id.ed_Address);

@@ -1,5 +1,6 @@
 package com.example.user1801.flowerguard;
 
+import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -18,18 +19,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.example.user1801.flowerguard.bluetoothThing.bluetoothTools;
 import com.example.user1801.flowerguard.chaosThing.ChaosMath;
 
 import android.util.Base64;
+import android.widget.Toast;
+
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    ChaosMath test,test2;
-    Random random;
-    ImageView userImageView2;
+    String log = "ImageButtonListener";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,23 +46,71 @@ public class MainActivity extends AppCompatActivity
             }
         });
 //        fab.setVisibility(View.GONE);
-        userImageView2 = findViewById(R.id.imageView2);
         activityOriginalSetting();
-//        userImageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            }
-//        });
-        Button buttonTste = findViewById(R.id.buttonTest);
-        buttonTste.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent page = new Intent(MainActivity.this,UserInformationActivity.class);
-                startActivity(page);
-//                test.chaosMath();
-            }
-        });
+        findView();
     }
+
+    private void findView() {
+        ImageButton imageButton_Bluetooth = findViewById(R.id.imageButton_bluetooth);
+        ImageButton imageButton_NFC = findViewById(R.id.imageButton_nfc);
+        ImageButton imageButton_lock = findViewById(R.id.imageButton_lock);
+        ImageButton imageButton_Camera = findViewById(R.id.imageButton_camera);
+        ImageButton imageButton_History = findViewById(R.id.imageButton_history);
+        ImageButton imageButton_Share = findViewById(R.id.imageButton_share);
+        imageButton_Bluetooth.setOnClickListener(onImageButtonClickListener);
+        imageButton_NFC.setOnClickListener(onImageButtonClickListener);
+        imageButton_lock.setOnClickListener(onImageButtonClickListener);
+        imageButton_Camera.setOnClickListener(onImageButtonClickListener);
+        imageButton_History.setOnClickListener(onImageButtonClickListener);
+        imageButton_Share.setOnClickListener(onImageButtonClickListener);
+    }
+
+    View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.imageButton_bluetooth:
+                    Log.d(log,"click bluetooth button");
+                    Toast.makeText(MainActivity.this, "bluetooth button", Toast.LENGTH_SHORT).show();
+                    bluetoothTools b = new bluetoothTools();
+                    b.initializeBluetooth();
+                    b.connect("98:D3:31:90:32:38");
+                    break;
+                case R.id.imageButton_nfc:
+                    Log.d(log,"click nfc button");
+                    Toast.makeText(MainActivity.this, "nfc button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.imageButton_lock:
+                    Log.d(log,"click lock button");
+                    Toast.makeText(MainActivity.this, "lock button", Toast.LENGTH_SHORT).show();
+                    bluetoothTools a = new bluetoothTools();
+                    a.initializeBluetooth();
+                    a.connect("98:D3:31:90:32:38");
+                    a.sendChaosUs(12.5f);
+//                    ChaosMath chaosMath = new ChaosMath();
+//                    chaosMath.inti();
+//                    for (int i = 0; i <30 ; i++) {
+//                        chaosMath.chaosMath();
+//                        a.ieee754Write(12.5f);
+//                        float x1 = chaosMath.getX1();
+//                        a.ieee754Write((float) 12.5);//(1+(x1*x1))* 123456);
+//                    }
+                    break;
+                case R.id.imageButton_camera:
+                    Log.d(log,"click camera button");
+                    Toast.makeText(MainActivity.this, "camera button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.imageButton_history:
+                    Log.d(log,"click history button");
+                    Toast.makeText(MainActivity.this, "history button", Toast.LENGTH_SHORT).show();
+                    break;
+                case  R.id.imageButton_share:
+                    Log.d(log,"click share button");
+                    Toast.makeText(MainActivity.this,"share button", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
     private void activityOriginalSetting() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -88,7 +139,6 @@ public class MainActivity extends AppCompatActivity
                     userImageView.setImageBitmap(BitmapFactory.decodeByteArray(decodeByte,0,decodeByte.length));
                 }
             });
-            userImageView2.setImageBitmap(BitmapFactory.decodeByteArray(decodeByte,0,decodeByte.length));
         }
     }
 
@@ -118,6 +168,11 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_account) {
+            Intent page = new Intent(MainActivity.this,UserInformationActivity.class);
+            startActivity(page);
             return true;
         }
 
