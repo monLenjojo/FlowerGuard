@@ -101,7 +101,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@android:color/white"
                     android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/icon_record" />
+                    app:srcCompat="@drawable/icon_history" />
 
                 <ImageButton
                     android:id="@+id/imageButton_share"
@@ -118,6 +118,65 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorGray"
                 android:paddingLeft="8sp" />
+
+            <LinearLayout
+                android:id="@+id/lockButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/controlLock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitStart"
+                    app:srcCompat="@drawable/chaoslogo" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cameraButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/icon_camera" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/historyButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageButton
+                    android:id="@+id/imageButton2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitStart"
+                    app:srcCompat="@drawable/icon_history" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/shareButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageButton
+                    android:id="@+id/imageButton3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_menu_share" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

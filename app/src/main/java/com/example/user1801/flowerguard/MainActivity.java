@@ -4,9 +4,11 @@ import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +24,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.example.user1801.flowerguard.bluetoothChaos.chaosWithBluetooth;
 import com.example.user1801.flowerguard.bluetoothThing.bluetoothTools;
 import com.example.user1801.flowerguard.chaosThing.ChaosMath;
 
 import android.util.Base64;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -33,6 +37,80 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     String log = "ImageButtonListener";
+    ChaosMath chaosMath;
+    bluetoothTools a;
+    LinearLayout linearLayoutLock,linearLayoutCamera,linearLayoutHistory,linearLayoutShare;
+    View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.imageButton_bluetooth:
+                    Log.d(log, "click bluetooth button");
+//                    Toast.makeText(MainActivity.this, "bluetooth button", Toast.LENGTH_SHORT).show();
+                    bluetoothTools b = new bluetoothTools();
+                    b.reverseBluetooth();
+                    break;
+                case R.id.imageButton_nfc:
+                    Log.d(log, "click nfc button");
+                    Toast.makeText(MainActivity.this, "nfc button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.imageButton_lock:
+                    Log.d(log, "click lock button");
+                    linearLayoutLock.setVisibility(View.VISIBLE);
+                    linearLayoutCamera.setVisibility(View.GONE);
+                    linearLayoutHistory.setVisibility(View.GONE);
+                    linearLayoutShare.setVisibility(View.GONE);
+//                    Toast.makeText(MainActivity.this, "lock button", Toast.LENGTH_SHORT).show();
+//                    a = new bluetoothTools();
+//                    a.initializeBluetooth();
+////                    a.connect("98:D3:31:90:32:38");
+//                    Log.d("chaosTest", "Get connect");
+//                    a.connect("98:D3:31:FB:8A:D0");
+//                    chaosMath = new ChaosMath();
+//                    chaosMath.inti();
+//                    mathLoop(-12.543f);
+//                    mathLoop(-378.54f);
+//                    mathLoop(4.7487f);
+                    Log.d("chaosTest", "DONE");
+                    break;
+                case R.id.imageButton_camera:
+                    Log.d(log, "click camera button");
+                    linearLayoutLock.setVisibility(View.GONE);
+                    linearLayoutCamera.setVisibility(View.VISIBLE);
+                    linearLayoutHistory.setVisibility(View.GONE);
+                    linearLayoutShare.setVisibility(View.GONE);
+//                    Toast.makeText(MainActivity.this, "camera button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.imageButton_history:
+                    Log.d(log, "click history button");
+                    linearLayoutLock.setVisibility(View.GONE);
+                    linearLayoutCamera.setVisibility(View.GONE);
+                    linearLayoutHistory.setVisibility(View.VISIBLE);
+                    linearLayoutShare.setVisibility(View.GONE);
+//                    Toast.makeText(MainActivity.this, "history button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.imageButton_share:
+                    Log.d(log, "click share button");
+                    linearLayoutLock.setVisibility(View.GONE);
+                    linearLayoutCamera.setVisibility(View.GONE);
+                    linearLayoutHistory.setVisibility(View.GONE);
+                    linearLayoutShare.setVisibility(View.VISIBLE);
+//                    Toast.makeText(MainActivity.this, "share button", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+    View.OnClickListener onControlFunctionClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()){
+                case R.id.controlLock:
+                    new chaosWithBluetooth(MainActivity.this,"98:D3:31:FB:8A:D0");
+                    break;
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,54 +141,38 @@ public class MainActivity extends AppCompatActivity
         imageButton_Camera.setOnClickListener(onImageButtonClickListener);
         imageButton_History.setOnClickListener(onImageButtonClickListener);
         imageButton_Share.setOnClickListener(onImageButtonClickListener);
+        linearLayoutLock = findViewById(R.id.lockButtonLayout);
+        linearLayoutCamera = findViewById(R.id.cameraButtonLayout);
+        linearLayoutHistory = findViewById(R.id.historyButtonLayout);
+        linearLayoutShare = findViewById(R.id.shareButtonLayout);
+        ImageView controlLock = findViewById(R.id.controlLock);
+        controlLock.setOnClickListener(onControlFunctionClickListener);
     }
 
-    View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.imageButton_bluetooth:
-                    Log.d(log,"click bluetooth button");
-                    Toast.makeText(MainActivity.this, "bluetooth button", Toast.LENGTH_SHORT).show();
-                    bluetoothTools b = new bluetoothTools();
-                    b.initializeBluetooth();
-                    b.connect("98:D3:31:90:32:38");
-                    break;
-                case R.id.imageButton_nfc:
-                    Log.d(log,"click nfc button");
-                    Toast.makeText(MainActivity.this, "nfc button", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.imageButton_lock:
-                    Log.d(log,"click lock button");
-                    Toast.makeText(MainActivity.this, "lock button", Toast.LENGTH_SHORT).show();
-                    bluetoothTools a = new bluetoothTools();
-                    a.initializeBluetooth();
-                    a.connect("98:D3:31:90:32:38");
-                    a.sendChaosUs(12.5f);
-//                    ChaosMath chaosMath = new ChaosMath();
-//                    chaosMath.inti();
-//                    for (int i = 0; i <30 ; i++) {
-//                        chaosMath.chaosMath();
-//                        a.ieee754Write(12.5f);
-//                        float x1 = chaosMath.getX1();
-//                        a.ieee754Write((float) 12.5);//(1+(x1*x1))* 123456);
-//                    }
-                    break;
-                case R.id.imageButton_camera:
-                    Log.d(log,"click camera button");
-                    Toast.makeText(MainActivity.this, "camera button", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.imageButton_history:
-                    Log.d(log,"click history button");
-                    Toast.makeText(MainActivity.this, "history button", Toast.LENGTH_SHORT).show();
-                    break;
-                case  R.id.imageButton_share:
-                    Log.d(log,"click share button");
-                    Toast.makeText(MainActivity.this,"share button", Toast.LENGTH_SHORT).show();
-                    break;
-            }
+    private void mathLoop(float val) {
+        float x1;
+        Log.d("chaosTest", "Start");
+        chaosMath.chaosMath();
+        a.ieee754Write(chaosMath.getU1());
+        x1 = chaosMath.getX1();
+        Log.d("chaosTest", "u1\t"+chaosMath.getU1());
+        a.ieee754Write((1 + (x1 * x1)) * val);
+        int check = a.inputPort();
+        if(check==65){
+            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
+            mathLoop(val);
+        }else if(check==66){
+            Log.d("MCUReturn",Float.toString(a.getMCUreturn()));
+            Log.d("MCUReturn", "=============Lock one Open=============");
+        }else if(check==67){
+            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
+            Log.d("MCUReturn", "=============Lock two Open=============");
+        }else if(check==68){
+            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
+            Log.d("MCUReturn", "=============Lock there Open=============");
         }
-    };
+
+    }
 
     private void activityOriginalSetting() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -123,20 +185,20 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        SharedPreferences sharedPreferences = getSharedPreferences("ImageFile",MODE_PRIVATE);
-        final String userImageString = sharedPreferences.getString("UserImage","noFile");
-        if(!userImageString.equals("noFile")){
-            Log.d("Image","userImage is change");
-            Log.d("Image","Data："+userImageString);
+        SharedPreferences sharedPreferences = getSharedPreferences("ImageFile", MODE_PRIVATE);
+        final String userImageString = sharedPreferences.getString("UserImage", "noFile");
+        if (!userImageString.equals("noFile")) {
+            Log.d("Image", "userImage is change");
+            Log.d("Image", "Data：" + userImageString);
             LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-            final View view = layoutInflater.inflate(R.layout.nav_header_main,null);
+            final View view = layoutInflater.inflate(R.layout.nav_header_main, null);
             final ImageView userImageView = view.findViewById(R.id.headerUserImage);
-            final byte[] decodeByte = Base64.decode(userImageString,0);
+            final byte[] decodeByte = Base64.decode(userImageString, 0);
             userImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d("touch","touch dnow");
-                    userImageView.setImageBitmap(BitmapFactory.decodeByteArray(decodeByte,0,decodeByte.length));
+                    Log.d("touch", "touch dnow");
+                    userImageView.setImageBitmap(BitmapFactory.decodeByteArray(decodeByte, 0, decodeByte.length));
                 }
             });
         }
@@ -171,8 +233,14 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.action_account) {
-            Intent page = new Intent(MainActivity.this,UserInformationActivity.class);
+            Intent page = new Intent(MainActivity.this, UserInformationActivity.class);
             startActivity(page);
+            return true;
+        }
+        if (id == R.id.action_logout) {
+            Intent page = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(page);
+            MainActivity.this.finish();
             return true;
         }
 

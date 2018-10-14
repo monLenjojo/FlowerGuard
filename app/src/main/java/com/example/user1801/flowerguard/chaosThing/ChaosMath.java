@@ -107,7 +107,7 @@ public class ChaosMath {
         x1 = x1s;
         x2 = x2s;
         x3 = x3s;
-        Log.d("Math", "x1=：\t" + x1);
+        Log.d("Math", "x1=：\t" + x1+"\tx1s=：\t" + x1s);
     }
 
     public float getU1() {

@@ -1,9 +1,10 @@
-package com.example.user1801.flowerguard.bluetoothThing;
+package com.example.user1801.flowerguard.bluetoothChaos;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,7 +13,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class bluetoothTools {
+public class chaosWithBluetooth {
+    float g1, g2, g3, g4;
+    float h1, h2;
+    float j1, j2;
+    float u1, u2;
+    float ax1, ax2, ax3;
+    float dx1, dx2, dx3;
+    float A;
+    float c1, c2;
+    float x1, x2, x3;
+    float x1s, x2s, x3s;
+    float y1, y2, y3;
+    float y1s, y2s, y3s;
+    int testTime = 0;
+
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     BluetoothAdapter adapter;
     BluetoothDevice device;
@@ -20,9 +35,66 @@ public class bluetoothTools {
     OutputStream write;
     InputStream read;
     String log = "test",strSet="0";
-    public bluetoothTools() {
+
+    public chaosWithBluetooth(Context context,String MAC){
         adapter = BluetoothAdapter.getDefaultAdapter();
+        initailizeChaos();
+        initializeBluetooth();
+        if(connect(MAC)){
+            Toast.makeText(context, "Connect", Toast.LENGTH_SHORT).show();
+            mathLoop(-12.543f);
+            mathLoop(-378.54f);
+            mathLoop(4.7487f);
+        }else{
+            Toast.makeText(context, "Not Connect", Toast.LENGTH_SHORT).show();
+        }
     }
+    private void initailizeChaos() {
+        ax1 = 1;
+        ax2 = 1;
+        ax3 = 1;
+        dx1 = 1;
+        dx2 = 1;
+        dx3 = 1;
+        c1 = (float) -0.5;
+        c2 = (float) 0.06;
+        A = (float) 0.1;
+        x1 = -0.1f;
+        x2 = 0.4f;
+        x3 = -0.3f;
+    }
+
+    public void chaosMath() { //手機端的混沌公式
+        g1 = -(ax1 / (ax2 * ax2));
+        g2 = (float) 2 * ax1 * dx2 / (ax2 * ax2);
+        g3 = (float) -0.1 * ax1 / ax3;
+        g4 = (float) (ax1 * (1.76 - (dx2 * dx2) / (ax2 * ax2) + 0.1 * ax1 * dx3 / ax3) + dx1);
+
+        h1 = ax2 / ax1;
+        h2 = -(ax2 * dx1) / ax1 + dx2;
+
+        j1 = ax3 / ax2;
+        j2 = -(ax3 * dx2) / ax2 + dx3;
+
+        u1 = x2 * x2 * g1 + x2 * g2 + x3 * g3 + x1 * c1 * h1 + x2 * c2 * j1 - x1 * A - x2 * c1 * A - x3 * c2 * A;
+
+        x1s = g1 * x2 * x2 + g2 * x2 + g3 * x3 + g4;
+        x2s = h1 * x1 + h2;
+        x3s = j1 * x2 + j2;
+        x1 = x1s;
+        x2 = x2s;
+        x3 = x3s;
+        Log.d("Math", "x1=：\t" + x1+"\tx1s=：\t" + x1s);
+    }
+    public float getU1() {
+        return u1;
+    }
+
+    public float getX1() {
+        return x1;
+    }
+
+//--------------------bluetooth-------------------------------
 
     public void initializeBluetooth() {
         boolean isEnable = adapter.isEnabled();
@@ -36,29 +108,18 @@ public class bluetoothTools {
         return adapter.enable();
     }
 
-    public boolean closeBluetooth() {
-        return adapter.disable();
-    }
-
-    public void reverseBluetooth() {
-        if (adapter.isEnabled()) {
-            adapter.disable();
-        } else {
-            adapter.enable();
-        }
-    }
-
-    public void connect(String address) {
-        device = adapter.getRemoteDevice(address);
+    public boolean connect(String MAC){
+        device = adapter.getRemoteDevice(MAC);
         try {
             socket = device.createRfcommSocketToServiceRecord(MY_UUID);
             socket.connect();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("BluetoothSocket", String.valueOf(e));
+            Log.e("BluetoothConnect","connect error, "+e);
+            return false;
         }
     }
-
     public int inputPort() {
         try {
             read = socket.getInputStream();
@@ -68,33 +129,6 @@ public class bluetoothTools {
         }
         return -1;
     }
-
-    public void outputPort() {
-        try {
-            write = socket.getOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-//    public void ieee754Write(float val) {
-//        int sendVal = Float.floatToIntBits(val);
-//        byte valArray[] = new byte[11];
-//        int floatSet = Integer.parseInt("0");
-//        int[] adapterVal = {floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet};
-//        for (int i = 0; i < 11; i++) {
-//            valArray[i] = (byte) ((sendVal & 0xe0000000) >>> (29-(i*3)));
-//            adapterVal[i] = valArray[i];
-//            Log.d("test", "val："+String.valueOf(adapterVal[i]));
-//        }
-//        try {
-//            write = socket.getOutputStream();
-//            for (int i = 0; i <11 ; i++) {
-//                write.write(adapterVal[i]);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public void ieee754Write(float val) {
         int sendUm = Float.floatToIntBits(val);
@@ -178,5 +212,28 @@ public class bluetoothTools {
             e.printStackTrace();
         }
         return floatS;
+    }
+    private void mathLoop(float val) {
+        float x1;
+//        Log.d("chaosTest", "Start");
+        chaosMath();
+        ieee754Write(getU1());
+        x1 = getX1();
+//        Log.d("chaosTest", "u1\t"+getU1());
+        ieee754Write((1 + (x1 * x1)) * val);
+        int check = inputPort();
+        if (check == 65) {
+            Log.d("MCUReturn", Float.toString(getMCUreturn()));
+            mathLoop(val);
+        } else if (check == 66) {
+            Log.d("MCUReturn", Float.toString(getMCUreturn()));
+            Log.d("MCUReturn", "=============Lock one Open=============");
+        } else if (check == 67) {
+            Log.d("MCUReturn", Float.toString(getMCUreturn()));
+            Log.d("MCUReturn", "=============Lock two Open=============");
+        } else if (check == 68) {
+            Log.d("MCUReturn", Float.toString(getMCUreturn()));
+            Log.d("MCUReturn", "=============Lock there Open=============");
+        }
     }
 }

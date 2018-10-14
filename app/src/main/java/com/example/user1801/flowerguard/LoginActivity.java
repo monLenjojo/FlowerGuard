@@ -96,10 +96,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-        Intent page = new Intent(LoginActivity.this,MainActivity.class);
-        startActivity(page);
-        LoginActivity.this.finish();
+//
+//        Intent page = new Intent(LoginActivity.this,MainActivity.class);
+//        startActivity(page);
+//        LoginActivity.this.finish();
     }
 
     private void populateAutoComplete() {
@@ -340,8 +340,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Toast.makeText(getApplicationContext(),"Finsish",Toast.LENGTH_LONG).show();
-                Intent page = new Intent(LoginActivity.this,UserInformationActivity.class);
+//                Toast.makeText(getApplicationContext(),"Finsish",Toast.LENGTH_LONG).show();
+                Intent page = new Intent(LoginActivity.this,MainActivity.class);
                 startActivity(page);
                 LoginActivity.this.finish();
 //                finish();
