@@ -59,14 +59,12 @@ public class bluetoothTools {
         }
     }
 
-    public int inputPort() {
+    public void inputPort() {
         try {
             read = socket.getInputStream();
-            return read.read();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return -1;
     }
 
     public void outputPort() {
@@ -76,28 +74,28 @@ public class bluetoothTools {
             e.printStackTrace();
         }
     }
-//    public void ieee754Write(float val) {
-//        int sendVal = Float.floatToIntBits(val);
-//        byte valArray[] = new byte[11];
-//        int floatSet = Integer.parseInt("0");
-//        int[] adapterVal = {floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet};
-//        for (int i = 0; i < 11; i++) {
-//            valArray[i] = (byte) ((sendVal & 0xe0000000) >>> (29-(i*3)));
-//            adapterVal[i] = valArray[i];
-//            Log.d("test", "val："+String.valueOf(adapterVal[i]));
-//        }
-//        try {
-//            write = socket.getOutputStream();
-//            for (int i = 0; i <11 ; i++) {
-//                write.write(adapterVal[i]);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     public void ieee754Write(float val) {
-        int sendUm = Float.floatToIntBits(val);
+        int sendVal = Float.floatToIntBits(val);
+        byte valArray[] = new byte[11];
+        int floatSet = Integer.parseInt("0");
+        int[] adapterVal = {floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet, floatSet};
+        for (int i = 0; i < 11; i++) {
+            valArray[i] = (byte) ((sendVal & 0xe0000000) >>> (29-(i*3)));
+            adapterVal[i] = valArray[i];
+            Log.d("test", "val："+String.valueOf(adapterVal[i]));
+        }
+        try {
+            write = socket.getOutputStream();
+            for (int i = 0; i <11 ; i++) {
+                write.write(adapterVal[i]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendChaosUs(float u1) {
+        int sendUm = Float.floatToIntBits(u1);
         Log.i(log, "sendUm = " + sendUm);
         int f1 = Integer.parseInt(strSet), f2 = Integer.parseInt(strSet), f3 = Integer.parseInt(strSet), f4 = Integer.parseInt(strSet), f5 = Integer.parseInt(strSet), f6 = Integer.parseInt(strSet), f7 = Integer.parseInt(strSet), f8 = Integer.parseInt(strSet), f9 = Integer.parseInt(strSet), f10 = Integer.parseInt(strSet), f11 = Integer.parseInt(strSet);
         byte us[] = new byte[11];
@@ -151,32 +149,5 @@ public class bluetoothTools {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    public float getMCUreturn() {
-        int floatS = Integer.parseInt(strSet);
-        try {
-            read = socket.getInputStream();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        try {
-            floatS |= ((read.read() & 0x07)) << 29;
-            floatS |= ((read.read() & 0x07)) << 26;
-            floatS |= ((read.read() & 0x07)) << 23;
-            floatS |= ((read.read() & 0x07)) << 20;
-            floatS |= ((read.read() & 0x07)) << 17;
-            floatS |= ((read.read() & 0x07)) << 14;
-            floatS |= ((read.read() & 0x07)) << 11;
-            floatS |= ((read.read() & 0x07)) << 8;
-            floatS |= ((read.read() & 0x07)) << 5;
-            floatS |= ((read.read() & 0x07)) << 2;
-            floatS |= ((read.read() & 0x03));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return floatS;
     }
 }
