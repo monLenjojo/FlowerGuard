@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.text.Layout;
@@ -27,19 +28,33 @@ import android.widget.ImageView;
 import com.example.user1801.flowerguard.bluetoothChaos.chaosWithBluetooth;
 import com.example.user1801.flowerguard.bluetoothThing.bluetoothTools;
 import com.example.user1801.flowerguard.chaosThing.ChaosMath;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.util.Base64;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.sql.Time;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     String log = "ImageButtonListener";
+    FirebaseDatabase firebaseDatabase;
+    FirebaseUser firebaseAuth;
+    DatabaseReference databaseReference;
     ChaosMath chaosMath;
     bluetoothTools a;
     LinearLayout linearLayoutLock,linearLayoutCamera,linearLayoutHistory,linearLayoutShare;
+    chaosWithBluetooth chaosWithBluetooth;
     View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -60,6 +75,10 @@ public class MainActivity extends AppCompatActivity
                     linearLayoutCamera.setVisibility(View.GONE);
                     linearLayoutHistory.setVisibility(View.GONE);
                     linearLayoutShare.setVisibility(View.GONE);
+
+                    if(chaosWithBluetooth.connect("98:D3:31:FB:8A:D0")) {
+                        Toast.makeText(MainActivity.this, "Connect false", Toast.LENGTH_SHORT).show();
+                    }
 //                    Toast.makeText(MainActivity.this, "lock button", Toast.LENGTH_SHORT).show();
 //                    a = new bluetoothTools();
 //                    a.initializeBluetooth();
@@ -87,6 +106,23 @@ public class MainActivity extends AppCompatActivity
                     linearLayoutCamera.setVisibility(View.GONE);
                     linearLayoutHistory.setVisibility(View.VISIBLE);
                     linearLayoutShare.setVisibility(View.GONE);
+                    databaseReference = firebaseDatabase.getReference("account");
+                    Map<String,Object> data = new HashMap<>();
+                    data.put("name","Bob");
+                    data.put("phone","0987123456");
+                    databaseReference.child(
+                            FirebaseAuth.getInstance().getCurrentUser().getUid()).child("person").setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(MainActivity.this, "work", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(MainActivity.this, "Failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
 //                    Toast.makeText(MainActivity.this, "history button", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.imageButton_share:
@@ -105,7 +141,22 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.controlLock:
-                    new chaosWithBluetooth(MainActivity.this,"98:D3:31:FB:8A:D0");
+                        if (chaosWithBluetooth.start(MainActivity.this)) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("who", firebaseAuth.getUid());
+                            data.put("theEmail", firebaseAuth.getEmail());
+                            data.put("state", "true");
+                            databaseReference = firebaseDatabase.getReference("doorLife");
+                            databaseReference.child(firebaseAuth.getUid()).push().setValue(data);
+                        } else {
+                            Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("who", firebaseAuth.getUid());
+                            data.put("theEmail", firebaseAuth.getEmail());
+                            data.put("state", "false");
+                            databaseReference = firebaseDatabase.getReference("doorLife");
+                            databaseReference.child(firebaseAuth.getUid()).push().setValue(data);
+                        }
                     break;
             }
         }
@@ -126,6 +177,9 @@ public class MainActivity extends AppCompatActivity
 //        fab.setVisibility(View.GONE);
         activityOriginalSetting();
         findView();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance().getCurrentUser();
+        chaosWithBluetooth = new chaosWithBluetooth();
     }
 
     private void findView() {
@@ -149,30 +203,30 @@ public class MainActivity extends AppCompatActivity
         controlLock.setOnClickListener(onControlFunctionClickListener);
     }
 
-    private void mathLoop(float val) {
-        float x1;
-        Log.d("chaosTest", "Start");
-        chaosMath.chaosMath();
-        a.ieee754Write(chaosMath.getU1());
-        x1 = chaosMath.getX1();
-        Log.d("chaosTest", "u1\t"+chaosMath.getU1());
-        a.ieee754Write((1 + (x1 * x1)) * val);
-        int check = a.inputPort();
-        if(check==65){
-            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
-            mathLoop(val);
-        }else if(check==66){
-            Log.d("MCUReturn",Float.toString(a.getMCUreturn()));
-            Log.d("MCUReturn", "=============Lock one Open=============");
-        }else if(check==67){
-            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
-            Log.d("MCUReturn", "=============Lock two Open=============");
-        }else if(check==68){
-            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
-            Log.d("MCUReturn", "=============Lock there Open=============");
-        }
-
-    }
+//    private void mathLoop(float val) {
+//        float x1;
+//        Log.d("chaosTest", "Start");
+//        chaosMath.chaosMath();
+//        a.ieee754Write(chaosMath.getU1());
+//        x1 = chaosMath.getX1();
+//        Log.d("chaosTest", "u1\t"+chaosMath.getU1());
+//        a.ieee754Write((1 + (x1 * x1)) * val);
+//        int check = a.inputPort();
+//        if(check==65){
+//            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
+//            mathLoop(val);
+//        }else if(check==66){
+//            Log.d("MCUReturn",Float.toString(a.getMCUreturn()));
+//            Log.d("MCUReturn", "=============Lock one Open=============");
+//        }else if(check==67){
+//            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
+//            Log.d("MCUReturn", "=============Lock two Open=============");
+//        }else if(check==68){
+//            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
+//            Log.d("MCUReturn", "=============Lock there Open=============");
+//        }
+//
+//    }
 
     private void activityOriginalSetting() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -238,6 +292,8 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.action_logout) {
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuth.signOut();
             Intent page = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(page);
             MainActivity.this.finish();

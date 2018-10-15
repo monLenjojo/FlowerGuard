@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1046393235685",
+    "firebase_url": "https://secretchaosdoor.firebaseio.com",
+    "project_id": "secretchaosdoor",
+    "storage_bucket": "secretchaosdoor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046393235685:android:8bf193b4a89794da",
+        "android_client_info": {
+          "package_name": "com.example.user1801.flowerguard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1046393235685-0fceh8tgs6n6mu7u0q9oi4ppl4n2suuk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.user1801.flowerguard",
+            "certificate_hash": "71bf91262c07773c302d6d9502ce34843bbd632d"
+          }
+        },
+        {
+          "client_id": "1046393235685-st2k9ppc237eoro1pcofncll845qjoek.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClEy6AisfbQjhYTIOGozjVbv49fM-icq0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1046393235685-st2k9ppc237eoro1pcofncll845qjoek.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

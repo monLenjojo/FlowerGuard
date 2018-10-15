@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,41 +13,32 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 public class chaosWithBluetooth {
-    float g1, g2, g3, g4;
-    float h1, h2;
-    float j1, j2;
-    float u1, u2;
-    float ax1, ax2, ax3;
-    float dx1, dx2, dx3;
-    float A;
-    float c1, c2;
-    float x1, x2, x3;
-    float x1s, x2s, x3s;
-    float y1, y2, y3;
-    float y1s, y2s, y3s;
-    int testTime = 0;
-
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private float g1, g2, g3, g4;
+    private float h1, h2;
+    private float j1, j2;
+    private float u1, u2;
+    private float ax1, ax2, ax3;
+    private float dx1, dx2, dx3;
+    private float A;
+    private float c1, c2;
+    private float x1, x2, x3;
+    private float x1s, x2s, x3s;
+    private float y1, y2, y3;
+    private float y1s, y2s, y3s;
+    private int testTime = 0;
     BluetoothAdapter adapter;
     BluetoothDevice device;
     BluetoothSocket socket;
     OutputStream write;
     InputStream read;
     String log = "test",strSet="0";
-
-    public chaosWithBluetooth(Context context,String MAC){
+    public chaosWithBluetooth(){
         adapter = BluetoothAdapter.getDefaultAdapter();
         initailizeChaos();
         initializeBluetooth();
-        if(connect(MAC)){
-            Toast.makeText(context, "Connect", Toast.LENGTH_SHORT).show();
-            mathLoop(-12.543f);
-            mathLoop(-378.54f);
-            mathLoop(4.7487f);
-        }else{
-            Toast.makeText(context, "Not Connect", Toast.LENGTH_SHORT).show();
-        }
     }
+
     private void initailizeChaos() {
         ax1 = 1;
         ax2 = 1;
@@ -86,6 +76,7 @@ public class chaosWithBluetooth {
         x3 = x3s;
         Log.d("Math", "x1=：\t" + x1+"\tx1s=：\t" + x1s);
     }
+
     public float getU1() {
         return u1;
     }
@@ -94,7 +85,26 @@ public class chaosWithBluetooth {
         return x1;
     }
 
-//--------------------bluetooth-------------------------------
+    public void setX1(float x1) {
+        this.x1 = x1;
+    }
+
+    public float getX2() {
+        return x2;
+    }
+
+    public void setX2(float x2) {
+        this.x2 = x2;
+    }
+
+    public float getX3() {
+        return x3;
+    }
+
+    public void setX3(float x3) {
+        this.x3 = x3;
+    }
+    //--------------------bluetooth-------------------------------
 
     public void initializeBluetooth() {
         boolean isEnable = adapter.isEnabled();
@@ -213,7 +223,7 @@ public class chaosWithBluetooth {
         }
         return floatS;
     }
-    private void mathLoop(float val) {
+    private boolean mathLoop(float val) {
         float x1;
 //        Log.d("chaosTest", "Start");
         chaosMath();
@@ -234,6 +244,15 @@ public class chaosWithBluetooth {
         } else if (check == 68) {
             Log.d("MCUReturn", Float.toString(getMCUreturn()));
             Log.d("MCUReturn", "=============Lock there Open=============");
+            return true;
         }
+        return false;
+    }
+
+    public boolean start(Context context) {
+            Toast.makeText(context, "Connect", Toast.LENGTH_SHORT).show();
+            mathLoop(-12.543f);
+            mathLoop(-378.54f);
+            return mathLoop(4.7487f);
     }
 }

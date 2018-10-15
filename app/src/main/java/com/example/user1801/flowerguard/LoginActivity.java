@@ -33,6 +33,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-
+    FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +88,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
         });
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener(){
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                if(firebaseUser!=null){
+                    Log.d("FirebaseLogIn","登入資訊，"+firebaseUser.getUid());
+                    Intent page = new Intent(LoginActivity.this,MainActivity.class);
+                    startActivity(page);
+                    LoginActivity.this.finish();
+                }else {
+                    Log.d("FirebaseLogIn","以登出");
+                }
+            }
+        };
+        firebaseAuth.addAuthStateListener(authStateListener);
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -282,7 +300,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
         mEmailView.setAdapter(adapter);
     }
 
@@ -315,12 +332,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+//            try {
+//                // Simulate network access.
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                return false;
+//            }
 
             for (String credential : DUMMY_CREDENTIALS) {//該:用來取出集合（陣列）中每一個元素
                 String[] pieces = credential.split(":");
@@ -341,9 +358,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
 //                Toast.makeText(getApplicationContext(),"Finsish",Toast.LENGTH_LONG).show();
-                Intent page = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(page);
-                LoginActivity.this.finish();
+                firebaseAuth.signInWithEmailAndPassword(mEmail,mPassword);
 //                finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
