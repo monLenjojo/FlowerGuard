@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "1046393235685-o6rcn04e12l9kb4c2pqilg4nh74iq7j2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.user1801.flowerguard",
+            "certificate_hash": "e32d31eb177adc744900b33b02471360d06efa7f"
+          }
+        },
+        {
           "client_id": "1046393235685-st2k9ppc237eoro1pcofncll845qjoek.apps.googleusercontent.com",
           "client_type": 3
         }

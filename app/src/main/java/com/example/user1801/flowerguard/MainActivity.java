@@ -1,15 +1,14 @@
 package com.example.user1801.flowerguard;
 
-import android.bluetooth.BluetoothManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.text.Layout;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,17 +21,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.user1801.flowerguard.bluetoothChaos.chaosWithBluetooth;
 import com.example.user1801.flowerguard.bluetoothThing.bluetoothTools;
 import com.example.user1801.flowerguard.chaosThing.ChaosMath;
+import com.example.user1801.flowerguard.firebaseThing.jBeanSetDevice;
+import com.example.user1801.flowerguard.firebaseThing.jBeanSetHistory;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -40,10 +46,8 @@ import android.util.Base64;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -53,15 +57,15 @@ public class MainActivity extends AppCompatActivity
     DatabaseReference databaseReference;
     ChaosMath chaosMath;
     bluetoothTools a;
-    LinearLayout linearLayoutLock,linearLayoutCamera,linearLayoutHistory,linearLayoutShare;
+    LinearLayout linearLayoutLock, linearLayoutCamera, linearLayoutHistory, linearLayoutShare;
     chaosWithBluetooth chaosWithBluetooth;
+    String checkBoxString;
     View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.imageButton_bluetooth:
                     Log.d(log, "click bluetooth button");
-//                    Toast.makeText(MainActivity.this, "bluetooth button", Toast.LENGTH_SHORT).show();
                     bluetoothTools b = new bluetoothTools();
                     b.reverseBluetooth();
                     break;
@@ -75,21 +79,6 @@ public class MainActivity extends AppCompatActivity
                     linearLayoutCamera.setVisibility(View.GONE);
                     linearLayoutHistory.setVisibility(View.GONE);
                     linearLayoutShare.setVisibility(View.GONE);
-
-                    if(chaosWithBluetooth.connect("98:D3:31:FB:8A:D0")) {
-                        Toast.makeText(MainActivity.this, "Connect false", Toast.LENGTH_SHORT).show();
-                    }
-//                    Toast.makeText(MainActivity.this, "lock button", Toast.LENGTH_SHORT).show();
-//                    a = new bluetoothTools();
-//                    a.initializeBluetooth();
-////                    a.connect("98:D3:31:90:32:38");
-//                    Log.d("chaosTest", "Get connect");
-//                    a.connect("98:D3:31:FB:8A:D0");
-//                    chaosMath = new ChaosMath();
-//                    chaosMath.inti();
-//                    mathLoop(-12.543f);
-//                    mathLoop(-378.54f);
-//                    mathLoop(4.7487f);
                     Log.d("chaosTest", "DONE");
                     break;
                 case R.id.imageButton_camera:
@@ -106,23 +95,6 @@ public class MainActivity extends AppCompatActivity
                     linearLayoutCamera.setVisibility(View.GONE);
                     linearLayoutHistory.setVisibility(View.VISIBLE);
                     linearLayoutShare.setVisibility(View.GONE);
-                    databaseReference = firebaseDatabase.getReference("account");
-                    Map<String,Object> data = new HashMap<>();
-                    data.put("name","Bob");
-                    data.put("phone","0987123456");
-                    databaseReference.child(
-                            FirebaseAuth.getInstance().getCurrentUser().getUid()).child("person").setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(MainActivity.this, "work", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(MainActivity.this, "Failure", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
 //                    Toast.makeText(MainActivity.this, "history button", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.imageButton_share:
@@ -136,31 +108,63 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
-    View.OnClickListener onControlFunctionClickListener = new View.OnClickListener(){
+    View.OnClickListener onControlFunctionClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            switch (view.getId()){
+            switch (view.getId()) {
                 case R.id.controlLock:
-                        if (chaosWithBluetooth.start(MainActivity.this)) {
-                            Map<String, Object> data = new HashMap<>();
-                            data.put("who", firebaseAuth.getUid());
-                            data.put("theEmail", firebaseAuth.getEmail());
-                            data.put("state", "true");
-                            databaseReference = firebaseDatabase.getReference("doorLife");
-                            databaseReference.child(firebaseAuth.getUid()).push().setValue(data);
-                        } else {
-                            Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
-                            Map<String, Object> data = new HashMap<>();
-                            data.put("who", firebaseAuth.getUid());
-                            data.put("theEmail", firebaseAuth.getEmail());
-                            data.put("state", "false");
-                            databaseReference = firebaseDatabase.getReference("doorLife");
-                            databaseReference.child(firebaseAuth.getUid()).push().setValue(data);
-                        }
+                    if (chaosWithBluetooth.start(MainActivity.this)) {
+                        jBeanSetHistory data = new jBeanSetHistory(firebaseAuth.getUid(),firebaseAuth.getEmail(),"Open");
+                        databaseReference = firebaseDatabase.getReference("doorLife");
+                        databaseReference.child(firebaseAuth.getUid()).push().setValue(data);
+                    } else {
+                        Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
+                        jBeanSetHistory data = new jBeanSetHistory(firebaseAuth.getUid(),firebaseAuth.getEmail(),"fail");
+                        databaseReference = firebaseDatabase.getReference("doorLife");
+                        databaseReference.child(firebaseAuth.getUid()).push().setValue(data);
+                    }
                     break;
             }
         }
     };
+    CheckBox checkBox_Lock, checkBox_check, checkBox_camera;
+    CheckBox.OnCheckedChangeListener checkBoxListener = new CheckBox.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            switch (buttonView.getId()) {
+                case R.id.addDeviceView_checkBox_Lock:
+                    if (isChecked) {
+                        checkBox_check.setChecked(false);
+                        checkBox_camera.setChecked(false);
+                    }
+                    break;
+                case R.id.addDeviceView_checkBox_check:
+                    if (isChecked) {
+                        checkBox_Lock.setChecked(false);
+                        checkBox_camera.setChecked(false);
+                    }
+                    break;
+                case R.id.addDeviceView_checkBox_camera:
+                    if (isChecked) {
+                        checkBox_Lock.setChecked(false);
+                        checkBox_check.setChecked(false);
+                    }
+                    break;
+                case R.id.addDeviceView_checkBox_Future:
+                    break;
+            }
+            checkBoxString = buttonView.getText().toString();
+            Log.e("CheckBox","choose： "+checkBoxString);
+        }
+    };
+
+    View.OnClickListener deviceButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Button theButton = findViewById(v.getId());
+            Toast.makeText(MainActivity.this, theButton.getText(), Toast.LENGTH_SHORT).show();
+            }
+        };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,6 +176,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
+                addNewDevice();
             }
         });
 //        fab.setVisibility(View.GONE);
@@ -180,6 +185,97 @@ public class MainActivity extends AppCompatActivity
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance().getCurrentUser();
         chaosWithBluetooth = new chaosWithBluetooth();
+        DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference(firebaseAuth.getUid()).child("mydevice");
+        firebaseListener.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                jBeanSetDevice data = dataSnapshot.getValue(jBeanSetDevice.class);
+                Toast.makeText(MainActivity.this, data.getDeviceName(), Toast.LENGTH_SHORT).show();
+                Button newButton = new Button(MainActivity.this);
+                newButton.setText(data.getDeviceName());
+                newButton.setOnClickListener(deviceButtonListener);
+                linearLayoutLock.addView(newButton);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addNewDevice() {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+        final View alertDialogView = layoutInflater.inflate(R.layout.alertdialog_input_product, null);
+        final EditText newDeviceKey = alertDialogView.findViewById(R.id.addDeviceView_ed_deviceKey);
+        final EditText newDeviceName = alertDialogView.findViewById(R.id.addDeviceView_ed_deviceName);
+        final EditText newOwner = alertDialogView.findViewById(R.id.addDeviceView_ed_owner);
+
+        checkBox_Lock = alertDialogView.findViewById(R.id.addDeviceView_checkBox_Lock);
+        checkBox_check = alertDialogView.findViewById(R.id.addDeviceView_checkBox_check);
+        checkBox_camera = alertDialogView.findViewById(R.id.addDeviceView_checkBox_camera);
+        checkBox_Lock.setOnCheckedChangeListener(checkBoxListener);
+        checkBox_check.setOnCheckedChangeListener(checkBoxListener);
+        checkBox_camera.setOnCheckedChangeListener(checkBoxListener);
+        alertDialog.setView(alertDialogView)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String deviceKey = newDeviceKey.getText().toString();
+                final String deviceName = newDeviceName.getText().toString();
+                String ownerName = newOwner.getText().toString();
+                if(TextUtils.isEmpty(deviceKey)){
+                    Toast.makeText(MainActivity.this, "要記得輸入\"Device key\"呦", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(TextUtils.isEmpty(ownerName)){
+                    Toast.makeText(MainActivity.this, "要記得輸入\"Owner\"是誰呦", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(TextUtils.isEmpty(deviceName)){
+                    Toast.makeText(MainActivity.this, "幫您的設備取個名子吧", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(TextUtils.isEmpty(checkBoxString)){
+                    Toast.makeText(MainActivity.this, "要記得選擇產品呦", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                jBeanSetDevice data = new jBeanSetDevice(deviceName,deviceKey,checkBoxString,ownerName);
+                databaseReference = firebaseDatabase.getReference("lockData");
+                databaseReference.push().setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(MainActivity.this, "成功新增 "+deviceName+" 裝置", Toast.LENGTH_SHORT).show();
+                        linearLayoutLock.setVisibility(View.VISIBLE);
+                        linearLayoutCamera.setVisibility(View.GONE);
+                        linearLayoutHistory.setVisibility(View.GONE);
+                        linearLayoutShare.setVisibility(View.GONE);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "很遺憾，上傳失敗!!", Toast.LENGTH_SHORT).show();
+                        Log.e("addNewDevice","Up date fail");
+                    }
+                });
+            }
+        }).setNegativeButton("cancel",null).show();
     }
 
     private void findView() {

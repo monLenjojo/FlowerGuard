@@ -123,13 +123,14 @@
                 android:id="@+id/lockButtonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/controlLock"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="250sp"
                     android:scaleType="fitStart"
                     app:srcCompat="@drawable/chaoslogo" />
             </LinearLayout>
@@ -158,7 +159,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <ListView
                     style="@style/Widget.AppCompat.Light.ListView.DropDown"

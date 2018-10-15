@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -23,6 +25,7 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -33,11 +36,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user1801.flowerguard.firebaseThing.jBeanSetPerson;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -69,6 +77,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     FirebaseAuth firebaseAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,20 +98,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
         firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener(){
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if(firebaseUser!=null){
-                    Log.d("FirebaseLogIn","登入資訊，"+firebaseUser.getUid());
-                    Intent page = new Intent(LoginActivity.this,MainActivity.class);
-                    startActivity(page);
-                    LoginActivity.this.finish();
-                }else {
-                    Log.d("FirebaseLogIn","以登出");
-                }
-            }
-        };
         firebaseAuth.addAuthStateListener(authStateListener);
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -358,7 +353,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
 //                Toast.makeText(getApplicationContext(),"Finsish",Toast.LENGTH_LONG).show();
-                firebaseAuth.signInWithEmailAndPassword(mEmail,mPassword);
+                firebaseAuth.signInWithEmailAndPassword(mEmail, mPassword);
+                firebaseAuth.addAuthStateListener(loginToRegisterListener);
 //                finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -372,5 +368,60 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseAuth.removeAuthStateListener(loginToRegisterListener);
+    }
+
+    FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+            if (firebaseUser != null) {
+                Log.d("FirebaseLogIn", "登入資訊，" + firebaseUser.getUid());
+                Intent page = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(page);
+                LoginActivity.this.finish();
+            }
+        }
+    };
+
+    FirebaseAuth.AuthStateListener loginToRegisterListener = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+            if (firebaseUser == null) {
+                Log.d("FirebaseLogIn", "null");
+                new AlertDialog.Builder(LoginActivity.this)
+                        .setTitle("Go register")
+                        .setMessage("Not find the user data,do you want create a new account new ?")
+                        .setPositiveButton("GO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent page = new Intent(LoginActivity.this, RegisterActivity.class);
+                                startActivity(page);
+                            }
+                        }).setNegativeButton("cancel", null).show();
+            }
+        }
+    };
+//    databaseReference = firebaseDatabase.getReference("account");
+//    Map<String, Object> data = new HashMap<>();
+//                    data.put("name", "Bob");
+//                    data.put("phone", "0987123456");
+//                    databaseReference.child(
+//                            FirebaseAuth.getInstance().getCurrentUser().getUid()).child("person").setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+//        @Override
+//        public void onSuccess(Void aVoid) {
+//            Toast.makeText(MainActivity.this, "work", Toast.LENGTH_SHORT).show();
+//        }
+//    }).addOnFailureListener(new OnFailureListener() {
+//        @Override
+//        public void onFailure(@NonNull Exception e) {
+//            Toast.makeText(MainActivity.this, "Failure", Toast.LENGTH_SHORT).show();
+//        }
+//    });
 }
 
