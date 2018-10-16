@@ -159,6 +159,8 @@
                 android:id="@+id/registerView_bt_done"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="attemptLogin"
+                android:enabled="false"
                 android:text="Done it" />
 
         </LinearLayout>

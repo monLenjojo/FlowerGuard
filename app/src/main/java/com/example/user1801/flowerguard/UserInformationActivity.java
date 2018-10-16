@@ -136,7 +136,7 @@ public class UserInformationActivity extends Activity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     EditText newText = (EditText) addNewView.findViewById(R.id.changeDataView_newText);
                                     String str = newText.getText().toString();
-                                    if (Pattern.compile("/^09\\d{2}-?\\d{3}-?\\d{3}$/").matcher(str).matches()) {
+                                    if (Pattern.compile("[0]{1}[9]{1}[0-9]{2}[0-9]{6}").matcher(str).matches()) {
                                         show_Phone.setText(str.trim());
                                     } else {
                                         Toast.makeText(UserInformationActivity.this, "請輸入正確號碼哦", Toast.LENGTH_SHORT).show();
