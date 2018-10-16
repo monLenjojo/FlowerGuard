@@ -1,38 +1,48 @@
 package com.example.user1801.flowerguard;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.user1801.flowerguard.firebaseThing.jBeanSetPerson;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthRegistrar;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
-    EditText ed_mEmail,ed_mPassword,ed_ckPassword,ed_name,ed_address,ed_phone;
+    EditText ed_mEmail, ed_mPassword, ed_ckPassword, ed_name, ed_address, ed_phone;
     CheckBox ck_agree;
     Button buttonDone;
+    jBeanSetPerson jBeanSetPerson;
+    FirebaseAuth auth;
+    String Uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         ed_mEmail = findViewById(R.id.registerView_ed_email);
         ed_mPassword = findViewById(R.id.registerView_ed_password);
         ed_ckPassword = findViewById(R.id.registerView_ed_check_password);
@@ -42,19 +52,20 @@ public class RegisterActivity extends AppCompatActivity {
         ck_agree = findViewById(R.id.registerView_check_agree);
         buttonDone = findViewById(R.id.registerView_bt_done);
         ck_agree.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    buttonDone.setEnabled(true);
-                }else{
-                    buttonDone.setEnabled(false);
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b) {
+                        buttonDone.setEnabled(true);
+                    } else {
+                        buttonDone.setEnabled(false);
+                    }
                 }
             }
-        }
         );
+        auth = FirebaseAuth.getInstance();
     }
 
-    public void attemptLogin(View view){
+    public void attemptLogin(View view) {
         View focusView = null;
         boolean checkData = true;
         ed_mEmail.setError(null);
@@ -79,10 +90,10 @@ public class RegisterActivity extends AppCompatActivity {
                 focusView = ed_phone;
                 checkData = false;
             }
-        }else{
+        } else {
             ed_phone.setError("請輸入電話");
             focusView = ed_phone;
-            checkData =false;
+            checkData = false;
         }
 
         if (TextUtils.isEmpty(address.trim())) {
@@ -91,27 +102,27 @@ public class RegisterActivity extends AppCompatActivity {
             checkData = false;
         }
 
-        if(!TextUtils.isEmpty(name)){
+        if (!TextUtils.isEmpty(name)) {
             //不為空
-        }else{
+        } else {
             ed_name.setError("請輸入你的名子");
             focusView = ed_name;
             checkData = false;
         }
 
-        if(!TextUtils.isEmpty(ckPassword)){
+        if (!TextUtils.isEmpty(ckPassword)) {
             if (!ckPassword.contains(mPassword)) {
                 ed_ckPassword.setError("確認密碼錯誤");
                 focusView = ed_ckPassword;
                 checkData = false;
             }
-        }else{
+        } else {
             ed_ckPassword.setError("請再次輸入你的密碼");
             focusView = ed_ckPassword;
             checkData = false;
         }
 
-        if (TextUtils.isEmpty(mPassword) && mPassword.length()<=6) {
+        if (TextUtils.isEmpty(mPassword) && mPassword.length() <= 6) {
             ed_mPassword.setError("密碼過短，請輸入6位以上");
             focusView = ed_mPassword;
             checkData = false;
@@ -131,27 +142,31 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (checkData) {
             //firebase
-            if (registerWithEmail(mEmail,mPassword)) {
-                jBeanSetPerson jBeanSetPerson = new jBeanSetPerson(name,phone,address,mEmail);
-                FirebaseDatabase.getInstance().getReference("userData").child(Uid).setValue(jBeanSetPerson);
-            }
-        }else {
+            jBeanSetPerson = new jBeanSetPerson(name, phone, address, mEmail);
+            registerWithEmail(mEmail, mPassword);
+        } else {
             focusView.requestFocus();
         }
     }
-    FirebaseAuth auth;
-    private boolean isComplete;
-    private String Uid;
-    private boolean registerWithEmail(String email, String password){
-        auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+    public void registerWithEmail(String email, String password) {
+        Log.d("CreateUser", email + " ," + password);
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                isComplete = task.isComplete();
-                if (isComplete) {
-                    Uid = task.getResult().getUser().getUid();
+                if (task.isComplete()) {
+                    if (task.isSuccessful()) {
+                        FirebaseDatabase.getInstance().getReference("userData").child(Uid).setValue(jBeanSetPerson);
+                        new AlertDialog.Builder(RegisterActivity.this).setMessage(jBeanSetPerson.getName()+" ,新帳號註冊成功囉\n自動轉換頁面中..").setPositiveButton("OK", null).show();
+                        Uid = auth.getUid();
+                        Log.d("CreateUser", "Uid：" + Uid);
+
+                        RegisterActivity.this.finish();
+                    } else {
+                        new AlertDialog.Builder(RegisterActivity.this).setMessage("註冊失敗").setPositiveButton("OK", null).show();
+                    }
                 }
             }
         });
-        return isComplete;
     }
 }

@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     LinearLayout linearLayoutLock, linearLayoutCamera, linearLayoutHistory, linearLayoutShare;
     chaosWithBluetooth chaosWithBluetooth;
     String checkBoxString;
+    private String firebaseUid;
     View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -114,14 +115,14 @@ public class MainActivity extends AppCompatActivity
             switch (view.getId()) {
                 case R.id.controlLock:
                     if (chaosWithBluetooth.start(MainActivity.this)) {
-                        jBeanSetHistory data = new jBeanSetHistory(firebaseAuth.getUid(),firebaseAuth.getEmail(),"Open");
+                        jBeanSetHistory data = new jBeanSetHistory(firebaseUid,firebaseAuth.getEmail(),"Open");
                         databaseReference = firebaseDatabase.getReference("doorLife");
-                        databaseReference.child(firebaseAuth.getUid()).push().setValue(data);
+                        databaseReference.child(firebaseUid).push().setValue(data);
                     } else {
                         Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
-                        jBeanSetHistory data = new jBeanSetHistory(firebaseAuth.getUid(),firebaseAuth.getEmail(),"fail");
+                        jBeanSetHistory data = new jBeanSetHistory(firebaseUid,firebaseAuth.getEmail(),"fail");
                         databaseReference = firebaseDatabase.getReference("doorLife");
-                        databaseReference.child(firebaseAuth.getUid()).push().setValue(data);
+                        databaseReference.child(firebaseUid).push().setValue(data);
                     }
                     break;
             }
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance().getCurrentUser();
         chaosWithBluetooth = new chaosWithBluetooth();
-        DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference(firebaseAuth.getUid()).child("mydevice");
+        DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid).child("mydevice");
         firebaseListener.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -274,6 +275,7 @@ public class MainActivity extends AppCompatActivity
                         Log.e("addNewDevice","Up date fail");
                     }
                 });
+//                databaseReference = firebaseDatabase.getReference("userData").child(firebaseUid).child("mydevice").setValue(data);
             }
         }).setNegativeButton("cancel",null).show();
     }

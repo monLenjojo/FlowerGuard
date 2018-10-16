@@ -37,8 +37,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user1801.flowerguard.firebaseThing.jBeanSetPerson;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -66,17 +69,57 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+    FirebaseAuth firebaseAuth;
+    FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+            if (firebaseUser != null) {
+                Log.d("FirebaseLogIn", "登入資訊，" + firebaseUser.getUid());
+                Intent page = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(page);
+                LoginActivity.this.finish();
+            }
+        }
+    };
+    FirebaseAuth.AuthStateListener loginToRegisterListener = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+            if (firebaseUser == null) {
+                Log.d("FirebaseLogIn", "null");
+                new AlertDialog.Builder(LoginActivity.this)
+                        .setTitle("Go register")
+                        .setMessage("Not find the user data,do you want create a new account new ?")
+                        .setPositiveButton("GO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent page = new Intent(LoginActivity.this, RegisterActivity.class);
+                                startActivity(page);
+                            }
+                        }).setNegativeButton("cancel", null).show();
+            }
+        }
+    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
-
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    FirebaseAuth firebaseAuth;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        try {
+            firebaseAuth.addAuthStateListener(authStateListener);
+        } catch (Exception e) {
+            Log.e("firebaseAuth", "LogIn error： " + e);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +141,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
         firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.addAuthStateListener(authStateListener);
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -157,7 +199,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
     }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -298,6 +339,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseAuth.removeAuthStateListener(loginToRegisterListener);
+        firebaseAuth.removeAuthStateListener(authStateListener);
+    }
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -349,12 +396,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
-
+//            showProgress(false);
             if (success) {
-//                Toast.makeText(getApplicationContext(),"Finsish",Toast.LENGTH_LONG).show();
-                firebaseAuth.signInWithEmailAndPassword(mEmail, mPassword);
-                firebaseAuth.addAuthStateListener(loginToRegisterListener);
+                try {
+                    firebaseAuth.removeAuthStateListener(authStateListener);
+                    firebaseAuth.signInWithEmailAndPassword(mEmail, mPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isComplete()) {
+                                firebaseAuth.addAuthStateListener(loginToRegisterListener);
+                                if (task.isSuccessful()) {
+                                    Log.d("FirebaseLogIn", "登入資訊，" + firebaseAuth.getCurrentUser().getUid());
+                                    Intent page = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(page);
+                                    LoginActivity.this.finish();
+                                } else {
+                                    showProgress(false);
+                                }
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e("FirebaseLogIn", "LogIn string error：" + mEmail + " ," + mPassword + "//Error data：" + e);
+                }
 //                finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -368,45 +432,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        firebaseAuth.removeAuthStateListener(loginToRegisterListener);
-    }
-
-    FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
-        @Override
-        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-            if (firebaseUser != null) {
-                Log.d("FirebaseLogIn", "登入資訊，" + firebaseUser.getUid());
-                Intent page = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(page);
-                LoginActivity.this.finish();
-            }
-        }
-    };
-
-    FirebaseAuth.AuthStateListener loginToRegisterListener = new FirebaseAuth.AuthStateListener() {
-        @Override
-        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-            if (firebaseUser == null) {
-                Log.d("FirebaseLogIn", "null");
-                new AlertDialog.Builder(LoginActivity.this)
-                        .setTitle("Go register")
-                        .setMessage("Not find the user data,do you want create a new account new ?")
-                        .setPositiveButton("GO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent page = new Intent(LoginActivity.this, RegisterActivity.class);
-                                startActivity(page);
-                            }
-                        }).setNegativeButton("cancel", null).show();
-            }
-        }
-    };
 //    databaseReference = firebaseDatabase.getReference("account");
 //    Map<String, Object> data = new HashMap<>();
 //                    data.put("name", "Bob");
