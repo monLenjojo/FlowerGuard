@@ -1,16 +1,16 @@
-package com.example.user1801.flowerguard.firebaseThing;
+package com.example.user1801.flowerguard.FirebaseThing;
 
-public class jBeanSetPerson {
+public class JavaBeanSetPerson {
     String name;
     String phone;
     String address;
     String email;
 
-    public jBeanSetPerson() {
+    public JavaBeanSetPerson() {
         super();
     }
 
-    public jBeanSetPerson(String name, String phone, String address, String email) {
+    public JavaBeanSetPerson(String name, String phone, String address, String email) {
         this.name = name;
         this.phone = phone;
         this.address = address;

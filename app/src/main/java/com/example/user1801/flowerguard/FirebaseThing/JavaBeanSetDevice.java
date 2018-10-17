@@ -1,16 +1,16 @@
-package com.example.user1801.flowerguard.firebaseThing;
+package com.example.user1801.flowerguard.FirebaseThing;
 
-public class jBeanSetDevice {
+public class JavaBeanSetDevice {
     String deviceName;
     String deviceKey;
     String module;
     String owner;
 
-    public jBeanSetDevice() {
+    public JavaBeanSetDevice() {
         super();
     }
 
-    public jBeanSetDevice(String deviceName, String deviceKey, String module, String owner) {
+    public JavaBeanSetDevice(String deviceName, String deviceKey, String module, String owner) {
         this.deviceName = deviceName;
         this.deviceKey = deviceKey;
         this.module = module;

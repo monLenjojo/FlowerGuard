@@ -1,11 +1,9 @@
 package com.example.user1801.flowerguard;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -14,18 +12,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.example.user1801.flowerguard.firebaseThing.jBeanSetPerson;
+import com.example.user1801.flowerguard.FirebaseThing.JavaBeanSetPerson;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthRegistrar;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Pattern;
@@ -34,7 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText ed_mEmail, ed_mPassword, ed_ckPassword, ed_name, ed_address, ed_phone;
     CheckBox ck_agree;
     Button buttonDone;
-    jBeanSetPerson jBeanSetPerson;
+    JavaBeanSetPerson JavaBeanSetPerson;
     FirebaseAuth auth;
     String Uid;
 
@@ -142,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (checkData) {
             //firebase
-            jBeanSetPerson = new jBeanSetPerson(name, phone, address, mEmail);
+            JavaBeanSetPerson = new JavaBeanSetPerson(name, phone, address, mEmail);
             registerWithEmail(mEmail, mPassword);
         } else {
             focusView.requestFocus();
@@ -156,9 +148,9 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isComplete()) {
                     if (task.isSuccessful()) {
-                        FirebaseDatabase.getInstance().getReference("userData").child(Uid).setValue(jBeanSetPerson);
-                        new AlertDialog.Builder(RegisterActivity.this).setMessage(jBeanSetPerson.getName()+" ,新帳號註冊成功囉\n自動轉換頁面中..").setPositiveButton("OK", null).show();
-                        Uid = auth.getUid();
+                        FirebaseDatabase.getInstance().getReference("userData").child(Uid).setValue(JavaBeanSetPerson);
+                        new AlertDialog.Builder(RegisterActivity.this).setMessage(JavaBeanSetPerson.getName()+" ,新帳號註冊成功囉\n自動轉換頁面中..").setPositiveButton("OK", null).show();
+                        Uid = auth.getCurrentUser().getUid();
                         Log.d("CreateUser", "Uid：" + Uid);
 
                         RegisterActivity.this.finish();

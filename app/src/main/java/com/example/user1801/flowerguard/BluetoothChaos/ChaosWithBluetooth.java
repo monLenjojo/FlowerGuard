@@ -1,8 +1,7 @@
-package com.example.user1801.flowerguard.bluetoothChaos;
+package com.example.user1801.flowerguard.BluetoothChaos;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
@@ -11,10 +10,9 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 import java.util.UUID;
 
-public class chaosWithBluetooth {
+public class ChaosWithBluetooth {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private float g1, g2, g3, g4;
     private float h1, h2;
@@ -37,7 +35,7 @@ public class chaosWithBluetooth {
     String log = "test",strSet="0";
     private boolean lockState;
 
-    public chaosWithBluetooth(){
+    public ChaosWithBluetooth(){
         adapter = BluetoothAdapter.getDefaultAdapter();
         initailizeChaos();
         initializeBluetooth();

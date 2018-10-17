@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -28,11 +27,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.example.user1801.flowerguard.bluetoothChaos.chaosWithBluetooth;
-import com.example.user1801.flowerguard.bluetoothThing.bluetoothTools;
-import com.example.user1801.flowerguard.chaosThing.ChaosMath;
-import com.example.user1801.flowerguard.firebaseThing.jBeanSetDevice;
-import com.example.user1801.flowerguard.firebaseThing.jBeanSetHistory;
+import com.example.user1801.flowerguard.BluetoothChaos.ChaosWithBluetooth;
+import com.example.user1801.flowerguard.BluetoothThing.BluetoothTools;
+import com.example.user1801.flowerguard.ChaosThing.ChaosMath;
+import com.example.user1801.flowerguard.FirebaseThing.JavaBeanSetDevice;
+import com.example.user1801.flowerguard.FirebaseThing.JavaBeanSetHistory;
+import com.example.user1801.flowerguard.ListAdapter.MyAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,16 +42,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 
 import android.util.Base64;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -60,18 +55,18 @@ public class MainActivity extends AppCompatActivity
     FirebaseUser firebaseAuth;
     DatabaseReference databaseReference;
     ChaosMath chaosMath;
-    bluetoothTools a;
+    BluetoothTools a;
     LinearLayout linearLayoutLock, linearLayoutCamera, linearLayoutHistory, linearLayoutShare;
-    chaosWithBluetooth chaosWithBluetooth;
+    ChaosWithBluetooth ChaosWithBluetooth;
     String checkBoxString;
-    private String firebaseUid;
+    private String firebaseUid, userName, userEmail;
     View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.imageButton_bluetooth:
                     Log.d(log, "click bluetooth button");
-                    bluetoothTools b = new bluetoothTools();
+                    BluetoothTools b = new BluetoothTools();
                     b.reverseBluetooth();
                     break;
                 case R.id.imageButton_nfc:
@@ -118,17 +113,17 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.controlLock:
-                    if (chaosWithBluetooth.isConnect()) {
-                        if (chaosWithBluetooth.start(MainActivity.this)) {
-                            jBeanSetHistory data = new jBeanSetHistory(firebaseUid, firebaseAuth.getEmail(), "Open");
-                            databaseReference = firebaseDatabase.getReference("doorLife");
-                            databaseReference.child(firebaseUid).push().setValue(data);
-                        } else {
-                            Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
-                            jBeanSetHistory data = new jBeanSetHistory(firebaseUid, firebaseAuth.getEmail(), "fail");
-                            databaseReference = firebaseDatabase.getReference("doorLife");
-                            databaseReference.child(firebaseUid).push().setValue(data);
-                        }
+                    if (ChaosWithBluetooth.isConnect()) {
+//                        if (ChaosWithBluetooth.start(MainActivity.this)) {
+//                            JavaBeanSetHistory data = new JavaBeanSetHistory(userName,firebaseUid,userEmail,"Open",);
+//                            databaseReference = firebaseDatabase.getReference("doorLife");
+//                            databaseReference.child(firebaseUid).push().setValue(data);
+//                        } else {
+//                            Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
+//                            JavaBeanSetHistory data = new JavaBeanSetHistory(firebaseUid, firebaseAuth.getEmail(), "fail");
+//                            databaseReference = firebaseDatabase.getReference("doorLife");
+//                            databaseReference.child(firebaseUid).push().setValue(data);
+//                        }
                     }else {
                         Toast.makeText(MainActivity.this, "hava to connected first.", Toast.LENGTH_SHORT).show();
                     }
@@ -194,7 +189,9 @@ public class MainActivity extends AppCompatActivity
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance().getCurrentUser();
         firebaseUid = firebaseAuth.getUid();
-        chaosWithBluetooth = new chaosWithBluetooth();
+        userEmail = firebaseAuth.getEmail();
+        userName = firebaseAuth.getDisplayName();//---------------------------------------------------------------------------加入LOGIN取
+        ChaosWithBluetooth = new ChaosWithBluetooth();
         dynamicButtonNum = 0;
         activityOriginalSetting();
         findView();
@@ -202,7 +199,7 @@ public class MainActivity extends AppCompatActivity
         firebaseListener.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                jBeanSetDevice data = dataSnapshot.getValue(jBeanSetDevice.class);
+                JavaBeanSetDevice data = dataSnapshot.getValue(JavaBeanSetDevice.class);
                 Toast.makeText(MainActivity.this, data.getDeviceName(), Toast.LENGTH_SHORT).show();
                 Button newButton = new Button(MainActivity.this);
                 newButton.setText(data.getDeviceName());
@@ -232,8 +229,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
         ListView historyList = findViewById(R.id.listView_historyList);
-//        Search
-//        ListAdapter historyListAdapter = new ListAdapter();
+//        SearchView searchView = findViewById(R.id.listView_historySearch);
+        String[] title = new String[]{"Apple" , "Banana" , "Cat" , "Dog"};
+        String[] text  = new String[]{"蘋果" , "香蕉" , "貓" , "狗"};
+        String[] message  = new String[]{"蘋果" , "香蕉" , "貓" , "狗"};
+        JavaBeanSetHistory javaBeanSetHistory = null;
+        MyAdapter myAdapter = new MyAdapter(this,javaBeanSetHistory);
+        historyList.setAdapter(myAdapter);
+
+
 //        historyList.setAdapter(historyListAdapter);
 //        DatabaseReference firebaseLockOpenHistory = FirebaseDatabase.getInstance().getReference("doorHistory").child("doorLife").child(firebaseUid);
 //        firebaseLockOpenHistory.addChildEventListener(new ChildEventListener() {
@@ -300,7 +304,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, "要記得選擇產品呦", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                final jBeanSetDevice data = new jBeanSetDevice(deviceName,deviceKey,checkBoxString,ownerName);
+                final JavaBeanSetDevice data = new JavaBeanSetDevice(deviceName,deviceKey,checkBoxString,ownerName);
                 databaseReference = firebaseDatabase.getReference("lockData");
                 databaseReference.push().setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

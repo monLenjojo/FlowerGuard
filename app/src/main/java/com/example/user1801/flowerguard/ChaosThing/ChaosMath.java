@@ -1,4 +1,4 @@
-package com.example.user1801.flowerguard.chaosThing;
+package com.example.user1801.flowerguard.ChaosThing;
 
 import android.util.Log;
 

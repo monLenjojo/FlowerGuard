@@ -1,18 +1,16 @@
-package com.example.user1801.flowerguard.bluetoothThing;
+package com.example.user1801.flowerguard.BluetoothThing;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class bluetoothTools {
+public class BluetoothTools {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     BluetoothAdapter adapter;
     BluetoothDevice device;
@@ -20,7 +18,7 @@ public class bluetoothTools {
     OutputStream write;
     InputStream read;
     String log = "test",strSet="0";
-    public bluetoothTools() {
+    public BluetoothTools() {
         adapter = BluetoothAdapter.getDefaultAdapter();
     }
 
