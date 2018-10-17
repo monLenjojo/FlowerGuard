@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -41,9 +42,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import android.util.Base64;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -114,15 +118,19 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.controlLock:
-                    if (chaosWithBluetooth.start(MainActivity.this)) {
-                        jBeanSetHistory data = new jBeanSetHistory(firebaseUid,firebaseAuth.getEmail(),"Open");
-                        databaseReference = firebaseDatabase.getReference("doorLife");
-                        databaseReference.child(firebaseUid).push().setValue(data);
-                    } else {
-                        Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
-                        jBeanSetHistory data = new jBeanSetHistory(firebaseUid,firebaseAuth.getEmail(),"fail");
-                        databaseReference = firebaseDatabase.getReference("doorLife");
-                        databaseReference.child(firebaseUid).push().setValue(data);
+                    if (chaosWithBluetooth.isConnect()) {
+                        if (chaosWithBluetooth.start(MainActivity.this)) {
+                            jBeanSetHistory data = new jBeanSetHistory(firebaseUid, firebaseAuth.getEmail(), "Open");
+                            databaseReference = firebaseDatabase.getReference("doorLife");
+                            databaseReference.child(firebaseUid).push().setValue(data);
+                        } else {
+                            Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
+                            jBeanSetHistory data = new jBeanSetHistory(firebaseUid, firebaseAuth.getEmail(), "fail");
+                            databaseReference = firebaseDatabase.getReference("doorLife");
+                            databaseReference.child(firebaseUid).push().setValue(data);
+                        }
+                    }else {
+                        Toast.makeText(MainActivity.this, "hava to connected first.", Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
@@ -162,10 +170,12 @@ public class MainActivity extends AppCompatActivity
     View.OnClickListener deviceButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Button theButton = findViewById(v.getId());
-            Toast.makeText(MainActivity.this, theButton.getText(), Toast.LENGTH_SHORT).show();
+            Button theButton = v.findViewById(v.getId());
+            Toast.makeText(MainActivity.this, theButton.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         };
+    int dynamicButtonNum;
+    ListView listView_history;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,11 +191,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 //        fab.setVisibility(View.GONE);
-        activityOriginalSetting();
-        findView();
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseUid = firebaseAuth.getUid();
         chaosWithBluetooth = new chaosWithBluetooth();
+        dynamicButtonNum = 0;
+        activityOriginalSetting();
+        findView();
         DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid).child("mydevice");
         firebaseListener.addChildEventListener(new ChildEventListener() {
             @Override
@@ -194,6 +206,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, data.getDeviceName(), Toast.LENGTH_SHORT).show();
                 Button newButton = new Button(MainActivity.this);
                 newButton.setText(data.getDeviceName());
+                newButton.setId(dynamicButtonNum);
                 newButton.setOnClickListener(deviceButtonListener);
                 linearLayoutLock.addView(newButton);
             }
@@ -218,6 +231,37 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+        ListView historyList = findViewById(R.id.listView_historyList);
+//        Search
+//        ListAdapter historyListAdapter = new ListAdapter();
+//        historyList.setAdapter(historyListAdapter);
+//        DatabaseReference firebaseLockOpenHistory = FirebaseDatabase.getInstance().getReference("doorHistory").child("doorLife").child(firebaseUid);
+//        firebaseLockOpenHistory.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     private void addNewDevice() {
@@ -234,8 +278,7 @@ public class MainActivity extends AppCompatActivity
         checkBox_Lock.setOnCheckedChangeListener(checkBoxListener);
         checkBox_check.setOnCheckedChangeListener(checkBoxListener);
         checkBox_camera.setOnCheckedChangeListener(checkBoxListener);
-        alertDialog.setView(alertDialogView)
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+        alertDialog.setView(alertDialogView).setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String deviceKey = newDeviceKey.getText().toString();
@@ -257,16 +300,19 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, "要記得選擇產品呦", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                jBeanSetDevice data = new jBeanSetDevice(deviceName,deviceKey,checkBoxString,ownerName);
+                final jBeanSetDevice data = new jBeanSetDevice(deviceName,deviceKey,checkBoxString,ownerName);
                 databaseReference = firebaseDatabase.getReference("lockData");
                 databaseReference.push().setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        databaseReference = firebaseDatabase.getReference("userData");
+                        if (databaseReference.child(firebaseUid).child("mydevice").push().setValue(data).isSuccessful()) {
                         Toast.makeText(MainActivity.this, "成功新增 "+deviceName+" 裝置", Toast.LENGTH_SHORT).show();
                         linearLayoutLock.setVisibility(View.VISIBLE);
                         linearLayoutCamera.setVisibility(View.GONE);
                         linearLayoutHistory.setVisibility(View.GONE);
                         linearLayoutShare.setVisibility(View.GONE);
+                        }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -275,7 +321,6 @@ public class MainActivity extends AppCompatActivity
                         Log.e("addNewDevice","Up date fail");
                     }
                 });
-//                databaseReference = firebaseDatabase.getReference("userData").child(firebaseUid).child("mydevice").setValue(data);
             }
         }).setNegativeButton("cancel",null).show();
     }
@@ -297,8 +342,9 @@ public class MainActivity extends AppCompatActivity
         linearLayoutCamera = findViewById(R.id.cameraButtonLayout);
         linearLayoutHistory = findViewById(R.id.historyButtonLayout);
         linearLayoutShare = findViewById(R.id.shareButtonLayout);
-        ImageView controlLock = findViewById(R.id.controlLock);
-        controlLock.setOnClickListener(onControlFunctionClickListener);
+//        ImageView controlLock = findViewById(R.id.controlLock);
+//        controlLock.setOnClickListener(onControlFunctionClickListener);
+        listView_history = findViewById(R.id.listView_historyList);
     }
 
 //    private void mathLoop(float val) {
@@ -323,7 +369,6 @@ public class MainActivity extends AppCompatActivity
 //            Log.d("MCUReturn", Float.toString(a.getMCUreturn()));
 //            Log.d("MCUReturn", "=============Lock there Open=============");
 //        }
-//
 //    }
 
     private void activityOriginalSetting() {

@@ -2,6 +2,7 @@ package com.example.user1801.flowerguard.bluetoothChaos;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.UUID;
 
 public class chaosWithBluetooth {
@@ -26,13 +28,15 @@ public class chaosWithBluetooth {
     private float x1s, x2s, x3s;
     private float y1, y2, y3;
     private float y1s, y2s, y3s;
-    private int testTime = 0;
+    private int testNum;
     BluetoothAdapter adapter;
     BluetoothDevice device;
     BluetoothSocket socket;
     OutputStream write;
     InputStream read;
     String log = "test",strSet="0";
+    private boolean lockState;
+
     public chaosWithBluetooth(){
         adapter = BluetoothAdapter.getDefaultAdapter();
         initailizeChaos();
@@ -223,9 +227,13 @@ public class chaosWithBluetooth {
         }
         return floatS;
     }
-    private boolean mathLoop(float val) {
+    private void mathLoop(float val) {
         float x1;
 //        Log.d("chaosTest", "Start");
+        testNum++;
+        if(testNum >= 100){
+            return;
+        }
         chaosMath();
         ieee754Write(getU1());
         x1 = getX1();
@@ -244,15 +252,21 @@ public class chaosWithBluetooth {
         } else if (check == 68) {
             Log.d("MCUReturn", Float.toString(getMCUreturn()));
             Log.d("MCUReturn", "=============Lock there Open=============");
-            return true;
+            lockState = true;
         }
-        return false;
     }
 
     public boolean start(Context context) {
-            Toast.makeText(context, "Connect", Toast.LENGTH_SHORT).show();
-            mathLoop(-12.543f);
-            mathLoop(-378.54f);
-            return mathLoop(4.7487f);
+        lockState = false;
+        testNum = 0;
+        mathLoop(-12.543f);
+        mathLoop(-378.54f);
+        mathLoop(4.7487f);
+        Toast.makeText(context, "lock open state is "+lockState, Toast.LENGTH_SHORT).show();
+        return lockState;
+    }
+
+    public boolean isConnect(){
+        return socket != null;
     }
 }

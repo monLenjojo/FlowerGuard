@@ -6,6 +6,10 @@ public class jBeanSetDevice {
     String module;
     String owner;
 
+    public jBeanSetDevice() {
+        super();
+    }
+
     public jBeanSetDevice(String deviceName, String deviceKey, String module, String owner) {
         this.deviceName = deviceName;
         this.deviceKey = deviceKey;

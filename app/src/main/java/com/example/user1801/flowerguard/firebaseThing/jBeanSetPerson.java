@@ -6,6 +6,10 @@ public class jBeanSetPerson {
     String address;
     String email;
 
+    public jBeanSetPerson() {
+        super();
+    }
+
     public jBeanSetPerson(String name, String phone, String address, String email) {
         this.name = name;
         this.phone = phone;

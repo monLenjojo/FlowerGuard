@@ -5,6 +5,10 @@ public class jBeanSetHistory {
     String email;
     String state;
 
+    public jBeanSetHistory() {
+        super();
+    }
+
     public jBeanSetHistory(String who, String email, String state) {
         this.who = who;
         this.email = email;
