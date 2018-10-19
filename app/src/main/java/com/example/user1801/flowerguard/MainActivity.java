@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -228,44 +229,42 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        ListView historyList = findViewById(R.id.listView_historyList);
+        final ListView historyList = findViewById(R.id.listView_historyList);
 //        SearchView searchView = findViewById(R.id.listView_historySearch);
         String[] title = new String[]{"Apple" , "Banana" , "Cat" , "Dog"};
         String[] text  = new String[]{"蘋果" , "香蕉" , "貓" , "狗"};
         String[] message  = new String[]{"蘋果" , "香蕉" , "貓" , "狗"};
-        JavaBeanSetHistory javaBeanSetHistory = null;
-        MyAdapter myAdapter = new MyAdapter(this,javaBeanSetHistory);
+        final MyAdapter myAdapter = new MyAdapter();
         historyList.setAdapter(myAdapter);
 
+        DatabaseReference firebaseLockOpenHistory = FirebaseDatabase.getInstance().getReference("doorHistory").child("doorLife").child(firebaseUid);
+        firebaseLockOpenHistory.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                JavaBeanSetHistory data = dataSnapshot.getValue(JavaBeanSetHistory.class);
+//                historyList.s;
+            }
 
-//        historyList.setAdapter(historyListAdapter);
-//        DatabaseReference firebaseLockOpenHistory = FirebaseDatabase.getInstance().getReference("doorHistory").child("doorLife").child(firebaseUid);
-//        firebaseLockOpenHistory.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void addNewDevice() {
