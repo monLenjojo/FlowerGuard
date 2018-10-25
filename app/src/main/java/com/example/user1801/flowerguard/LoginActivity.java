@@ -69,8 +69,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (firebaseUser != null) {
                 Log.d("FirebaseLogIn", "登入資訊，" + firebaseUser.getUid());
                 Intent page = new Intent(LoginActivity.this, MainActivity.class);
+                page.putExtra("firebaseUid",firebaseUser.getUid());
+                page.putExtra("userEmail",firebaseUser.getEmail());
                 startActivity(page);
-                LoginActivity.this.finish();
+//                LoginActivity.this.finish();
             }
         }
     };

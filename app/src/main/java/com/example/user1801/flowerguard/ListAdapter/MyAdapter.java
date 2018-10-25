@@ -46,6 +46,7 @@ public class MyAdapter extends BaseAdapter {
         }
         MyHolder myHolder = new MyHolder(view);
         myHolder.who.setText(adapters.get(i).getWho());
+        myHolder.deviceName.setText(adapters.get(i).getDeviceName());
 
         return view;
     }
