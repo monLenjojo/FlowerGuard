@@ -22,7 +22,7 @@ public class AddFirebaseButton {
         public void onClick(View v) {
             Button theButton = v.findViewById(v.getId());
             Toast.makeText(context, theButton.getText().toString(), Toast.LENGTH_SHORT).show();
-//            firebase.savedata(userName,theButton.getText().toString());
+//            DataGetInFirebase.savedata(userName,theButton.getText().toString());
 
         }
     };

@@ -158,18 +158,22 @@
                 android:id="@+id/historyButtonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <SearchView
                     android:id="@+id/listView_historySearch"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content">
+
+                </SearchView>
 
                 <ListView
                     android:id="@+id/listView_historyList"
                     style="@style/Widget.AppCompat.Light.ListView.DropDown"
                     android:layout_width="match_parent"
-                    android:layout_height="300sp" />
+                    android:layout_height="600sp"
+                    tools:layout_editor_absoluteX="384dp" />
 
             </LinearLayout>
 

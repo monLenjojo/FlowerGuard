@@ -1,16 +1,13 @@
 package com.example.user1801.flowerguard;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,32 +19,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import com.example.user1801.flowerguard.BluetoothChaos.ChaosWithBluetooth;
 import com.example.user1801.flowerguard.BluetoothThing.BluetoothTools;
 import com.example.user1801.flowerguard.ChaosThing.ChaosMath;
 import com.example.user1801.flowerguard.FirebaseThing.AddFirebaseButton;
 import com.example.user1801.flowerguard.FirebaseThing.JavaBeanSetDevice;
-import com.example.user1801.flowerguard.FirebaseThing.JavaBeanSetHistory;
-import com.example.user1801.flowerguard.ListAdapter.MyAdapter;
-import com.example.user1801.flowerguard.ListAdapter.firebase;
+import com.example.user1801.flowerguard.ListAdapter.DataGetInFirebase;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import android.util.Base64;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -167,7 +156,7 @@ public class MainActivity extends AppCompatActivity
     };
 
     ListView listView_history;
-    firebase firebase;
+    DataGetInFirebase DataGetInFirebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,8 +185,11 @@ public class MainActivity extends AppCompatActivity
         AddFirebaseButton addFirebaseButton = new AddFirebaseButton(this,firebaseUid,linearLayoutLock);
         addFirebaseButton.daraReference();
         ListView historyList = findViewById(R.id.listView_historyList);
-        firebase = new firebase(this, historyList, firebaseUid);
-        firebase.refreshData();
+//        DisplayMetrics displayMetrics = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+//        historyList.setDividerHeight(400);
+        DataGetInFirebase = new DataGetInFirebase(this, historyList, firebaseUid);
+        DataGetInFirebase.refreshData();
         ChaosWithBluetooth = new ChaosWithBluetooth();
     }
 

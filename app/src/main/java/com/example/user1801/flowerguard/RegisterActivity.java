@@ -133,7 +133,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (checkData) {
-            //firebase
+            //DataGetInFirebase
             JavaBeanSetPerson = new JavaBeanSetPerson(name, phone, address, mEmail);
             registerWithEmail(mEmail, mPassword);
         } else {
