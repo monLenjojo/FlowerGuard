@@ -13,7 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
-import com.example.user1801.flowerguard.FirebaseThing.JavaBeanSetPerson;
+import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetPerson;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

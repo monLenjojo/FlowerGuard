@@ -1,4 +1,4 @@
-package com.example.user1801.flowerguard.FirebaseThing;
+package com.example.user1801.flowerguard.firebaseThing;
 
 public class JavaBeanSetPerson {
     String name;

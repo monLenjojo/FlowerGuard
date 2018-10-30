@@ -1,4 +1,4 @@
-package com.example.user1801.flowerguard.FirebaseThing;
+package com.example.user1801.flowerguard.firebaseThing;
 
 import android.content.Context;
 import android.view.View;

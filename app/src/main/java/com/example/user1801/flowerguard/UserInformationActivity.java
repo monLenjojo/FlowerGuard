@@ -23,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user1801.flowerguard.firebaseThing.UserInformationGetOnFirebase;
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.util.regex.Pattern;
@@ -86,8 +89,10 @@ public class UserInformationActivity extends Activity {
                                     if (!TextUtils.isEmpty(str)) {
                                         if (!str.contains("@") & !str.contains(".")) {
                                             show_Name.setText(str);
+                                            setData.updataNewInformation("name",str);
                                         }
                                     }
+                                    editText.setEnabled(false);
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -116,6 +121,7 @@ public class UserInformationActivity extends Activity {
                                     } else {
                                         Toast.makeText(UserInformationActivity.this, "Email不可為空哦", Toast.LENGTH_SHORT).show();
                                     }
+                                    editText.setEnabled(false);
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -141,6 +147,7 @@ public class UserInformationActivity extends Activity {
                                     } else {
                                         Toast.makeText(UserInformationActivity.this, "請輸入正確號碼哦", Toast.LENGTH_SHORT).show();
                                     }
+                                    editText.setEnabled(false);
                                 }
                             }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
@@ -168,6 +175,7 @@ public class UserInformationActivity extends Activity {
                                     } else {
                                         Toast.makeText(UserInformationActivity.this, "地址不能空著哦", Toast.LENGTH_SHORT).show();
                                     }
+                                    editText.setEnabled(false);
                                 }
                             }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
@@ -181,6 +189,7 @@ public class UserInformationActivity extends Activity {
         }
     };
 
+    UserInformationGetOnFirebase setData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -198,7 +207,22 @@ public class UserInformationActivity extends Activity {
         } else {
             Log.d("ImageFile", "Is no have old image");
         }
-
+        Intent data = getIntent();
+        if (data.getStringExtra("firebaseUid").length()>0) {
+            setData = new UserInformationGetOnFirebase(data.getStringExtra("firebaseUid"), show_Name, show_Email, show_Phone, show_Address);
+            setData.addListenter();
+        }else{
+            Log.e("UserInformationActivity","Intent input uid is null");
+            String tryGetUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            if (tryGetUid.isEmpty()) {
+                Intent page = new Intent(this,LoginActivity.class);
+                startActivity(page);
+                this.finish();
+            }else{
+                setData = new UserInformationGetOnFirebase(tryGetUid, show_Name, show_Email, show_Phone, show_Address);
+                setData.addListenter();
+            }
+        }
     }
 
     private void setViewListener() {

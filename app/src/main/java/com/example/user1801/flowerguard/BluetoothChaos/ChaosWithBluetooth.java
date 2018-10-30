@@ -1,4 +1,4 @@
-package com.example.user1801.flowerguard.BluetoothChaos;
+package com.example.user1801.flowerguard.bluetoothChaos;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

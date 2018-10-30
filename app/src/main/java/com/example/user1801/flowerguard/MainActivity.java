@@ -24,12 +24,13 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.example.user1801.flowerguard.BluetoothChaos.ChaosWithBluetooth;
-import com.example.user1801.flowerguard.BluetoothThing.BluetoothTools;
-import com.example.user1801.flowerguard.ChaosThing.ChaosMath;
-import com.example.user1801.flowerguard.FirebaseThing.AddFirebaseButton;
-import com.example.user1801.flowerguard.FirebaseThing.JavaBeanSetDevice;
+import com.example.user1801.flowerguard.bluetoothChaos.ChaosWithBluetooth;
+import com.example.user1801.flowerguard.bluetoothThing.BluetoothTools;
+import com.example.user1801.flowerguard.chaosThing.ChaosMath;
+import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
+import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetDevice;
 import com.example.user1801.flowerguard.ListAdapter.DataGetInFirebase;
+import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,107 +54,6 @@ public class MainActivity extends AppCompatActivity
     ChaosWithBluetooth ChaosWithBluetooth;
     String checkBoxString;
     private String firebaseUid, userName, userEmail;
-    View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.imageButton_bluetooth:
-                    Log.d(log, "click bluetooth button");
-                    BluetoothTools b = new BluetoothTools();
-                    b.reverseBluetooth();
-                    break;
-                case R.id.imageButton_nfc:
-                    Log.d(log, "click nfc button");
-                    Toast.makeText(MainActivity.this, "nfc button", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.imageButton_lock:
-                    Log.d(log, "click lock button");
-                    linearLayoutLock.setVisibility(View.VISIBLE);
-                    linearLayoutCamera.setVisibility(View.GONE);
-                    linearLayoutHistory.setVisibility(View.GONE);
-                    linearLayoutShare.setVisibility(View.GONE);
-                    Log.d("chaosTest", "DONE");
-                    break;
-                case R.id.imageButton_camera:
-                    Log.d(log, "click camera button");
-                    linearLayoutLock.setVisibility(View.GONE);
-                    linearLayoutCamera.setVisibility(View.VISIBLE);
-                    linearLayoutHistory.setVisibility(View.GONE);
-                    linearLayoutShare.setVisibility(View.GONE);
-//                    Toast.makeText(MainActivity.this, "camera button", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.imageButton_history:
-                    Log.d(log, "click history button");
-                    linearLayoutLock.setVisibility(View.GONE);
-                    linearLayoutCamera.setVisibility(View.GONE);
-                    linearLayoutHistory.setVisibility(View.VISIBLE);
-                    linearLayoutShare.setVisibility(View.GONE);
-//                    Toast.makeText(MainActivity.this, "history button", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.imageButton_share:
-                    Log.d(log, "click share button");
-                    linearLayoutLock.setVisibility(View.GONE);
-                    linearLayoutCamera.setVisibility(View.GONE);
-                    linearLayoutHistory.setVisibility(View.GONE);
-                    linearLayoutShare.setVisibility(View.VISIBLE);
-//                    Toast.makeText(MainActivity.this, "share button", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-    };
-    View.OnClickListener onControlFunctionClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case R.id.controlLock:
-                    if (ChaosWithBluetooth.isConnect()) {
-//                        if (ChaosWithBluetooth.start(MainActivity.this)) {
-//                            JavaBeanSetHistory data = new JavaBeanSetHistory(userName,firebaseUid,userEmail,"Open",);
-//                            databaseReference = firebaseDatabase.getReference("doorLife");
-//                            databaseReference.child(firebaseUid).push().setValue(data);
-//                        } else {
-//                            Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
-//                            JavaBeanSetHistory data = new JavaBeanSetHistory(firebaseUid, firebaseAuth.getEmail(), "fail");
-//                            databaseReference = firebaseDatabase.getReference("doorLife");
-//                            databaseReference.child(firebaseUid).push().setValue(data);
-//                        }
-                    } else {
-                        Toast.makeText(MainActivity.this, "hava to connected first.", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
-        }
-    };
-    CheckBox checkBox_Lock, checkBox_check, checkBox_camera;
-    CheckBox.OnCheckedChangeListener checkBoxListener = new CheckBox.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            switch (buttonView.getId()) {
-                case R.id.addDeviceView_checkBox_Lock:
-                    if (isChecked) {
-                        checkBox_check.setChecked(false);
-                        checkBox_camera.setChecked(false);
-                    }
-                    break;
-                case R.id.addDeviceView_checkBox_check:
-                    if (isChecked) {
-                        checkBox_Lock.setChecked(false);
-                        checkBox_camera.setChecked(false);
-                    }
-                    break;
-                case R.id.addDeviceView_checkBox_camera:
-                    if (isChecked) {
-                        checkBox_Lock.setChecked(false);
-                        checkBox_check.setChecked(false);
-                    }
-                    break;
-                case R.id.addDeviceView_checkBox_Future:
-                    break;
-            }
-            checkBoxString = buttonView.getText().toString();
-            Log.e("CheckBox", "choose： " + checkBoxString);
-        }
-    };
 
     ListView listView_history;
     DataGetInFirebase DataGetInFirebase;
@@ -317,6 +217,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
 //        SharedPreferences sharedPreferences = getSharedPreferences("ImageFile", MODE_PRIVATE);
 //        final String userImageString = sharedPreferences.getString("UserImage", "noFile");
 //        if (!userImageString.equals("noFile")) {
@@ -366,6 +267,7 @@ public class MainActivity extends AppCompatActivity
         }
         if (id == R.id.action_account) {
             Intent page = new Intent(MainActivity.this, UserInformationActivity.class);
+            page.putExtra("firebaseUid",firebaseUid);
             startActivity(page);
             return true;
         }
@@ -404,5 +306,111 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.imageButton_bluetooth:
+                    Log.d(log, "click bluetooth button");
+                    BluetoothTools b = new BluetoothTools();
+                    b.reverseBluetooth();
+                    break;
+                case R.id.imageButton_nfc:
+                    Log.d(log, "click nfc button");
+                    Toast.makeText(MainActivity.this, "nfc button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.imageButton_lock:
+                    Log.d(log, "click lock button");
+                    linearLayoutLock.setVisibility(View.VISIBLE);
+                    linearLayoutCamera.setVisibility(View.GONE);
+                    linearLayoutHistory.setVisibility(View.GONE);
+                    linearLayoutShare.setVisibility(View.GONE);
+                    Log.d("chaosTest", "DONE");
+                    break;
+                case R.id.imageButton_camera:
+                    Log.d(log, "click camera button");
+                    linearLayoutLock.setVisibility(View.GONE);
+                    linearLayoutCamera.setVisibility(View.VISIBLE);
+                    linearLayoutHistory.setVisibility(View.GONE);
+                    linearLayoutShare.setVisibility(View.GONE);
+//                    Toast.makeText(MainActivity.this, "camera button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.imageButton_history:
+                    Log.d(log, "click history button");
+                    linearLayoutLock.setVisibility(View.GONE);
+                    linearLayoutCamera.setVisibility(View.GONE);
+                    linearLayoutHistory.setVisibility(View.VISIBLE);
+                    linearLayoutShare.setVisibility(View.GONE);
+//                    Toast.makeText(MainActivity.this, "history button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.imageButton_share:
+                    Log.d(log, "click share button");
+                    linearLayoutLock.setVisibility(View.GONE);
+                    linearLayoutCamera.setVisibility(View.GONE);
+                    linearLayoutHistory.setVisibility(View.GONE);
+                    linearLayoutShare.setVisibility(View.VISIBLE);
+//                    Toast.makeText(MainActivity.this, "share button", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+    View.OnClickListener onControlFunctionClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.controlLock:
+                    if (ChaosWithBluetooth.isConnect()) {
+//                        if (ChaosWithBluetooth.start(MainActivity.this)) {
+//                            JavaBeanSetHistory data = new JavaBeanSetHistory(userName,firebaseUid,userEmail,"Open",);
+//                            databaseReference = firebaseDatabase.getReference("doorLife");
+//                            databaseReference.child(firebaseUid).push().setValue(data);
+//                        } else {
+//                            Toast.makeText(MainActivity.this, "解鎖失敗", Toast.LENGTH_SHORT).show();
+//                            JavaBeanSetHistory data = new JavaBeanSetHistory(firebaseUid, firebaseAuth.getEmail(), "fail");
+//                            databaseReference = firebaseDatabase.getReference("doorLife");
+//                            databaseReference.child(firebaseUid).push().setValue(data);
+//                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, "hava to connected first.", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
+    CheckBox checkBox_Lock, checkBox_check, checkBox_camera;
+    CheckBox.OnCheckedChangeListener checkBoxListener = new CheckBox.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            switch (buttonView.getId()) {
+                case R.id.addDeviceView_checkBox_Lock:
+                    if (isChecked) {
+                        checkBox_check.setChecked(false);
+                        checkBox_camera.setChecked(false);
+                    }
+                    break;
+                case R.id.addDeviceView_checkBox_check:
+                    if (isChecked) {
+                        checkBox_Lock.setChecked(false);
+                        checkBox_camera.setChecked(false);
+                    }
+                    break;
+                case R.id.addDeviceView_checkBox_camera:
+                    if (isChecked) {
+                        checkBox_Lock.setChecked(false);
+                        checkBox_check.setChecked(false);
+                    }
+                    break;
+                case R.id.addDeviceView_checkBox_Future:
+                    break;
+            }
+            checkBoxString = buttonView.getText().toString();
+            Log.e("CheckBox", "choose： " + checkBoxString);
+        }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 }
