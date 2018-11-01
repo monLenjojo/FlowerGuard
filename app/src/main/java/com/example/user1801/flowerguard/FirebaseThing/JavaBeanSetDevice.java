@@ -5,16 +5,18 @@ public class JavaBeanSetDevice {
     String deviceKey;
     String module;
     String owner;
+    String firebaseUid;
 
     public JavaBeanSetDevice() {
         super();
     }
 
-    public JavaBeanSetDevice(String deviceName, String deviceKey, String module, String owner) {
+    public JavaBeanSetDevice(String deviceName, String deviceKey, String module, String owner, String firebaseUid) {
         this.deviceName = deviceName;
         this.deviceKey = deviceKey;
         this.module = module;
         this.owner = owner;
+        this.firebaseUid = firebaseUid;
     }
 
     public String getDeviceName() {

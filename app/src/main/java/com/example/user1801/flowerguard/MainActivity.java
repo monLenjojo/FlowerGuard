@@ -2,8 +2,10 @@ package com.example.user1801.flowerguard;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -31,12 +33,17 @@ import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetDevice;
 import com.example.user1801.flowerguard.ListAdapter.DataGetInFirebase;
 import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
+import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetPerson;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -79,7 +86,6 @@ public class MainActivity extends AppCompatActivity
 //        firebaseAuth = FirebaseAuth.getInstance().getCurrentUser();
 //        firebaseUid = firebaseAuth.getUid();
 //        userEmail = firebaseAuth.getEmail();
-        userName = "MyName";//---------------------------------------------------------------------------加入LOGIN取
         activityOriginalSetting();
         findView();
         AddFirebaseButton addFirebaseButton = new AddFirebaseButton(this,firebaseUid,linearLayoutLock);
@@ -93,7 +99,48 @@ public class MainActivity extends AppCompatActivity
         ChaosWithBluetooth = new ChaosWithBluetooth();
     }
 
-//    private void disPlayDialog(){
+    @Override
+    protected void onStart() {
+        super.onStart();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid);
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                JavaBeanSetPerson data = dataSnapshot.getValue(JavaBeanSetPerson.class);
+                Toast.makeText(MainActivity.this, "Data Change", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(data.getName())) {
+                    SharedPreferences sharedPreferences = getSharedPreferences("userInformation",MODE_PRIVATE);
+                    sharedPreferences.edit().putString("userName",data.getName());
+                    sharedPreferences.edit().putString("userPhone",data.getPhone());
+                    sharedPreferences.edit().putString("userAddress",data.getAddress());
+                    sharedPreferences.edit().putString("userEmail", data.getEmail());
+                    sharedPreferences.edit().commit();
+                }
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    //    private void disPlayDialog(){
 //        Dialog d = new Dialog(this);
 //        d.setTitle("SaveData");
 //
@@ -135,19 +182,19 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, "要記得選擇產品呦", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                final JavaBeanSetDevice data = new JavaBeanSetDevice(deviceName, deviceKey, checkBoxString, ownerName);
+                final JavaBeanSetDevice data = new JavaBeanSetDevice(deviceName, deviceKey, checkBoxString, ownerName, firebaseUid);
                 databaseReference = FirebaseDatabase.getInstance().getReference("lockData");
-                databaseReference.push().setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                databaseReference.child(firebaseUid).push().setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        databaseReference = FirebaseDatabase.getInstance().getReference("userData");
-                        if (databaseReference.child(firebaseUid).child("mydevice").push().setValue(data).isSuccessful()) {
+//                        databaseReference = FirebaseDatabase.getInstance().getReference("userData");
+//                        if (databaseReference.child(firebaseUid).child("mydevice").push().setValue(data).isSuccessful()) {
                             Toast.makeText(MainActivity.this, "成功新增 " + deviceName + " 裝置", Toast.LENGTH_SHORT).show();
                             linearLayoutLock.setVisibility(View.VISIBLE);
                             linearLayoutCamera.setVisibility(View.GONE);
                             linearLayoutHistory.setVisibility(View.GONE);
                             linearLayoutShare.setVisibility(View.GONE);
-                        }
+//                        }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -274,6 +321,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_logout) {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.signOut();
+            SharedPreferences sharedPreferences = getSharedPreferences("userInformation",MODE_PRIVATE);
+            sharedPreferences.edit().clear();
             Intent page = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(page);
             MainActivity.this.finish();
@@ -306,7 +355,9 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
+    }
+
+    View.OnClickListener onImageButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -354,6 +405,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
     View.OnClickListener onControlFunctionClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -377,6 +429,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
     CheckBox checkBox_Lock, checkBox_check, checkBox_camera;
     CheckBox.OnCheckedChangeListener checkBoxListener = new CheckBox.OnCheckedChangeListener() {
         @Override

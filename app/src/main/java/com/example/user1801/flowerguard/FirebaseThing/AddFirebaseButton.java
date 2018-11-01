@@ -37,7 +37,7 @@ public class AddFirebaseButton {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid).child("mydevice");
+                DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference("lockData").child(firebaseUid);
                 firebaseListener.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
