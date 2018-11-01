@@ -34,6 +34,7 @@ import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetDevice;
 import com.example.user1801.flowerguard.ListAdapter.DataGetInFirebase;
 import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetPerson;
+import com.example.user1801.flowerguard.localDatabase.UserInformationSharedPreferences;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -102,6 +103,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        SharedPreferences sharedPreferences = getSharedPreferences("userInformation",MODE_PRIVATE);
+        final UserInformationSharedPreferences updataUserLocalInfo = new UserInformationSharedPreferences(sharedPreferences);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid);
         ref.addChildEventListener(new ChildEventListener() {
             @Override
@@ -111,16 +114,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 JavaBeanSetPerson data = dataSnapshot.getValue(JavaBeanSetPerson.class);
-                Toast.makeText(MainActivity.this, "Data Change", Toast.LENGTH_SHORT).show();
-                if (TextUtils.isEmpty(data.getName())) {
-                    SharedPreferences sharedPreferences = getSharedPreferences("userInformation",MODE_PRIVATE);
-                    sharedPreferences.edit().putString("userName",data.getName());
-                    sharedPreferences.edit().putString("userPhone",data.getPhone());
-                    sharedPreferences.edit().putString("userAddress",data.getAddress());
-                    sharedPreferences.edit().putString("userEmail", data.getEmail());
-                    sharedPreferences.edit().commit();
-                }
-
+                updataUserLocalInfo.setInformation(data);
             }
 
             @Override

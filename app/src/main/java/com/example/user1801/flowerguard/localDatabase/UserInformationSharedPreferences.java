@@ -8,11 +8,13 @@ import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetPerson;
 
 public class UserInformationSharedPreferences {
     SharedPreferences sharedPreferences;
-    JavaBeanSetPerson data;
-    public void setSharedPreferences(SharedPreferences sharedPreferences, @NonNull JavaBeanSetPerson data) {
+
+    public UserInformationSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
+    }
+
+    public void setInformation(JavaBeanSetPerson data) {
         if (!TextUtils.isEmpty((CharSequence) data)) {
-            this.data = data;
             sharedPreferences.edit().putString("userName", data.getName());
             sharedPreferences.edit().putString("userPhone", data.getPhone());
             sharedPreferences.edit().putString("userAddress", data.getAddress());
@@ -21,5 +23,23 @@ public class UserInformationSharedPreferences {
         }
     }
 
+    public void setName(String name){
+        sharedPreferences.edit().putString("userName",name);
+        sharedPreferences.edit().commit();
+    }
 
+    public void setPhone(String phone){
+        sharedPreferences.edit().putString("userPhone",phone);
+        sharedPreferences.edit().commit();
+    }
+
+    public void setAddress(String address){
+        sharedPreferences.edit().putString("userAddress",address);
+        sharedPreferences.edit().commit();
+    }
+
+    public void setEmail(String email){
+        sharedPreferences.edit().putString("userEmail",email);
+        sharedPreferences.edit().commit();
+    }
 }
