@@ -1,11 +1,13 @@
 package com.example.user1801.flowerguard.firebaseThing;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.user1801.flowerguard.bluetoothChaos.ChaosWithBluetooth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,13 +19,22 @@ public class AddFirebaseButton {
     String firebaseUid;
     LinearLayout linearLayoutLock;
     int dynamicButtonNum = 0;
+    ChaosWithBluetooth tryConnectHoltek = new ChaosWithBluetooth();
     View.OnClickListener deviceButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Button theButton = v.findViewById(v.getId());
             Toast.makeText(context, theButton.getText().toString(), Toast.LENGTH_SHORT).show();
 //            DataGetInFirebase.savedata(userName,theButton.getText().toString());
+            if(!tryConnectHoltek.isConnect()) {
+            tryConnectHoltek.connect("98:D3:31:90:32:38", context);
+            }
+//            tryConnectHoltek.chaosMath();
+//            tryConnectHoltek.ieee754Write(tryConnectHoltek.getU1());
 
+//            tryConnectHoltek.ieee754Write(tryConnectHoltek.getX1());
+            tryConnectHoltek.start(context);
+            new AlertDialog.Builder(context).setTitle("發送").setMessage(String.valueOf(tryConnectHoltek.getU1()) + "\n" + String.valueOf(tryConnectHoltek.getX1())).show();
         }
     };
 
