@@ -1,12 +1,15 @@
 package com.example.user1801.flowerguard.firebaseThing;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
+import com.example.user1801.flowerguard.localDatabase.UserInformationSharedPreferences;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -21,7 +24,7 @@ import java.util.HashMap;
 public class UserInformationGetOnFirebase {
     TextView txName,txEmail,txPhone,txAddress;
     DatabaseReference databaseReference;
-
+    UserInformationSharedPreferences userInformationSharedPreferences;
     public UserInformationGetOnFirebase(String firebaseUid,TextView txName, TextView txEmail, TextView txPhone, TextView txAddress) {
         this.txName = txName;
         this.txEmail = txEmail;
@@ -38,34 +41,39 @@ public class UserInformationGetOnFirebase {
     }
 
     public void addListenter() {
-        databaseReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                getData(dataSnapshot);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                getData(dataSnapshot);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        databaseReference.addChildEventListener(listener);
     }
 
+    public void removeListenter(){
+        databaseReference.removeEventListener(listener);
+    }
+
+    private ChildEventListener listener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            getData(dataSnapshot);
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            getData(dataSnapshot);
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
 
     private void getData(DataSnapshot dataSnapshot) {
         JavaBeanSetPerson data = dataSnapshot.getValue(JavaBeanSetPerson.class);
@@ -76,6 +84,4 @@ public class UserInformationGetOnFirebase {
         txAddress.setText(data.address);
         }
     }
-
-
 }
