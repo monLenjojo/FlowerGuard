@@ -234,21 +234,16 @@ public class ChaosWithBluetooth {
         if(testNum >= 100){
             return;
         }
-        try {
-            // Simulate network access.
-            Thread.sleep(800);
-        } catch (InterruptedException e) {
-        }
         chaosMath();
         ieee754Write(getU1());
         x1 = getX1();
-        Log.d("chaosTest", "u1\t"+getU1()+"\tx1\t"+getX1());
-        ieee754Write(x1);//1 + (x1 * x1)) * val);
-        /*int check = inputPort();
+//        Log.d("chaosTest", "u1\t"+getU1());
+        ieee754Write((1 + (x1 * x1)) * val);
+        int check = inputPort();
         if (check == 65) {
             Log.d("MCUReturn", Float.toString(getMCUreturn()));
-          */  mathLoop(val);
-        /*} else if (check == 66) {
+            mathLoop(val);
+        } else if (check == 66) {
             Log.d("MCUReturn", Float.toString(getMCUreturn()));
             Log.d("MCUReturn", "=============Lock one Open=============");
         } else if (check == 67) {
@@ -258,7 +253,7 @@ public class ChaosWithBluetooth {
             Log.d("MCUReturn", Float.toString(getMCUreturn()));
             Log.d("MCUReturn", "=============Lock there Open=============");
             lockState = true;
-        }*/
+        }
     }
 
     public boolean start(Context context) {
@@ -273,5 +268,23 @@ public class ChaosWithBluetooth {
 
     public boolean isConnect(){
         return socket != null;
+    }
+
+    private void tryHOLTEKmathLoop(float val) {
+        float x1;
+        testNum++;
+        if(testNum >= 100){
+            return;
+        }
+        try {
+            // Simulate network access.
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+        }
+        chaosMath();
+        ieee754Write(getU1());
+        x1 = getX1();
+        Log.d("chaosTest", "u1\t"+getU1()+"\tx1\t"+getX1());
+        ieee754Write(x1);mathLoop(val);
     }
 }
