@@ -1,17 +1,15 @@
 package com.example.user1801.flowerguard.firebaseThing;
 
-public class JavaBeanSetAllDeviceList {
-    private String onUsed;
+public class JavaBeanSetOnUsedDeviceList {
     private String key;
     private String mac;
 
-    public JavaBeanSetAllDeviceList() {
+    public JavaBeanSetOnUsedDeviceList() {
         super();
     }
 
-    public JavaBeanSetAllDeviceList(String onUsed, String key, String mac) {
+    public JavaBeanSetOnUsedDeviceList(String key, String mac) {
         this.key = key;
-        this.onUsed = onUsed;
         this.mac = mac;
     }
 
@@ -21,14 +19,6 @@ public class JavaBeanSetAllDeviceList {
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public String getOnUsed() {
-        return onUsed;
-    }
-
-    public void setOnUsed(String onUsed) {
-        this.onUsed = onUsed;
     }
 
     public String getMac() {

@@ -77,6 +77,7 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="color" value="c8c8c8" />
                             <entry key="outputName" value="ic_bluetooth_black_24dp" />
                             <entry key="sourceFile" value="C:\Users\user1801" />
                           </map>

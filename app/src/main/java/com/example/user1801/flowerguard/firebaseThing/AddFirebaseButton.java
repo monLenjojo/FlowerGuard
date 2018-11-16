@@ -23,56 +23,33 @@ public class AddFirebaseButton {
     String firebaseUid;
     LinearLayout linearLayoutLock;
     int dynamicButtonNum = 0;
-    ChaosWithBluetooth tryConnectHoltek = new ChaosWithBluetooth();
-    View.OnClickListener deviceButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Button theButton = v.findViewById(v.getId());
+    ChaosWithBluetooth tryConnectHoltek;
 
-//            FirebaseDatabase.getInstance().getReference("deviceOnUsedList/"+firebaseUid).child(String.valueOf(v.getId()))
-
-
-//            int i = 100;
-//            for (int i1 = 2; i1 < i; i1++) {
-//                Map<String,Object> data = new HashMap<>();
-//                data.put("mac",i1);
-//                data.put("key",i1);
-//                data.put("onUsed","0");
-//                FirebaseDatabase.getInstance().getReference("allDeviceList").child(String.valueOf(i1)).setValue(data);
-//            }
-            Toast.makeText(context, theButton.getText().toString(), Toast.LENGTH_SHORT).show();
-//            DataGetInFirebase.savedata(userName,theButton.getText().toString());
-            if(!tryConnectHoltek.isConnect()) {
-            tryConnectHoltek.connect("98:D3:31:90:32:38", context);
-            }
-//            tryConnectHoltek.chaosMath();
-//            tryConnectHoltek.ieee754Write(tryConnectHoltek.getU1());
-
-//            tryConnectHoltek.ieee754Write(tryConnectHoltek.getX1());
-            tryConnectHoltek.tryHOLTEKmathLoop(context);
-//            new AlertDialog.Builder(context).setTitle("發送").setMessage(String.valueOf(tryConnectHoltek.getU1()) + "\n" + String.valueOf(tryConnectHoltek.getX1())).show();
-        }
-    };
-
-    public AddFirebaseButton(Context context, String firebaseUid, LinearLayout linearLayoutLock) {
+    public AddFirebaseButton(Context context, String firebaseUid, LinearLayout linearLayoutLock, ChaosWithBluetooth chaosWithBluetooth) {
         this.context = context;
         this.firebaseUid = firebaseUid;
         this.linearLayoutLock = linearLayoutLock;
+        tryConnectHoltek = chaosWithBluetooth;
     }
 
-    public void daraReference() {
+    public void dataReference() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference("userData/"+firebaseUid).child("myDevice");
+                DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference("userData/" + firebaseUid).child("myDevice");
                 firebaseListener.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        JavaBeanSetDevice data = dataSnapshot.getValue(JavaBeanSetDevice.class);
+                        final JavaBeanSetDevice data = dataSnapshot.getValue(JavaBeanSetDevice.class);
                         final Button newButton = new Button(context);
                         newButton.setText(data.getDeviceName());
                         newButton.setId(Integer.parseInt(data.getDeviceID()));
-                        newButton.setOnClickListener(deviceButtonListener);
+                        newButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new LockButtonFuction(context,firebaseUid,data.getDeviceID(),tryConnectHoltek);
+                            }
+                        });
                         linearLayoutLock.post(new Runnable() {
                             @Override
                             public void run() {
@@ -100,8 +77,35 @@ public class AddFirebaseButton {
 
                     }
                 });
-
             }
         }).start();
     }
+
+//    ChaosWithBluetooth tryConnectHoltek = new ChaosWithBluetooth();
+//    View.OnClickListener deviceButtonListener = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            Button theButton = v.findViewById(v.getId());
+//
+////            FirebaseDatabase.getInstance().getReference("deviceOnUsedList/"+firebaseUid).child(String.valueOf(v.getId()))
+//
+//
+////            int i = 100;
+////            for (int i1 = 0; i1 < i; i1++) {
+////                FirebaseDatabase.getInstance().getReference("allDeviceList").child(String.valueOf(i1)).child("deviceData").setValue(
+////                        new JavaBeanSetAllDeviceList("0",String.valueOf(i1),String.valueOf(i1)));
+////            }
+//            Toast.makeText(context, theButton.getText().toString(), Toast.LENGTH_SHORT).show();
+////            DataGetInFirebase.savedata(userName,theButton.getText().toString());
+//            if (!tryConnectHoltek.isConnect()) {
+//                tryConnectHoltek.connect("98:D3:31:90:32:38", context);
+//            }
+////            tryConnectHoltek.chaosMath();
+////            tryConnectHoltek.ieee754Write(tryConnectHoltek.getU1());
+//
+////            tryConnectHoltek.ieee754Write(tryConnectHoltek.getX1());
+//            tryConnectHoltek.tryHOLTEKmathLoop(context);
+////            new AlertDialog.Builder(context).setTitle("發送").setMessage(String.valueOf(tryConnectHoltek.getU1()) + "\n" + String.valueOf(tryConnectHoltek.getX1())).show();
+//        }
+//    };
 }

@@ -29,6 +29,7 @@ import com.example.user1801.flowerguard.bluetoothThing.BluetoothTools;
 import com.example.user1801.flowerguard.chaosThing.ChaosMath;
 import com.example.user1801.flowerguard.firebaseThing.AddDevice;
 import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
+import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetAllDeviceList;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetDevice;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetPerson;
 import com.example.user1801.flowerguard.listAdapter.DataGetInFirebase;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     ChaosMath chaosMath;
     BluetoothTools a;
     LinearLayout linearLayoutLock, linearLayoutCamera, linearLayoutHistory, linearLayoutShare;
-    ChaosWithBluetooth ChaosWithBluetooth;
+    ChaosWithBluetooth chaosWithBluetooth;
     String checkBoxString;
     private String firebaseUid, userName, userEmail;
 
@@ -81,49 +82,49 @@ public class MainActivity extends AppCompatActivity {
         firebaseUid = firebaseAuth.getUid();
         userEmail = firebaseAuth.getEmail();
         findView();
-        AddFirebaseButton addFirebaseButton = new AddFirebaseButton(this,firebaseUid,linearLayoutLock);
-        addFirebaseButton.daraReference();
+        chaosWithBluetooth = new ChaosWithBluetooth();
+        AddFirebaseButton addFirebaseButton = new AddFirebaseButton(this,firebaseUid,linearLayoutLock,chaosWithBluetooth);
+        addFirebaseButton.dataReference();
         ListView historyList = findViewById(R.id.listView_historyList);
 //        DisplayMetrics displayMetrics = new DisplayMetrics();
 //        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 //        historyList.setDividerHeight(400);
         DataGetInFirebase = new DataGetInFirebase(this, historyList, firebaseUid);
         DataGetInFirebase.refreshData();
-        ChaosWithBluetooth = new ChaosWithBluetooth();
 }
 
     @Override
     protected void onStart() {
         super.onStart();
-        SharedPreferences sharedPreferences = getSharedPreferences("userInformation",MODE_PRIVATE);
-        final UserInformationSharedPreferences updataUserLocalInfo = new UserInformationSharedPreferences(sharedPreferences);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid).child("information");
-        ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                JavaBeanSetPerson data = dataSnapshot.getValue(JavaBeanSetPerson.class);
-                updataUserLocalInfo.setInformation(data);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        SharedPreferences sharedPreferences = getSharedPreferences("userInformation",MODE_PRIVATE);
+//        final UserInformationSharedPreferences updataUserLocalInfo = new UserInformationSharedPreferences(sharedPreferences);
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid).child("information");
+//        ref.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                JavaBeanSetPerson data = dataSnapshot.getValue(JavaBeanSetPerson.class);
+//                updataUserLocalInfo.setInformation(data);
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     //    private void disPlayDialog(){
@@ -176,16 +177,6 @@ public class MainActivity extends AppCompatActivity {
 //        controlLock.setOnClickListener(onControlFunctionClickListener);
         listView_history = findViewById(R.id.listView_historyList);
     }
-
-    public void testfunction(View view) {
-        int i = 100;
-        for (int i1 = 0; i1 < i; i1++) {
-            FirebaseDatabase a = FirebaseDatabase.getInstance();
-            DatabaseReference b = a.getReference("allDeviceList").child(String.valueOf(i1)).child("key");
-            b.setValue(String.valueOf(i1));
-        }
-    }
-
 //    private void mathLoop(float val) {
 //        float x1;
 //        Log.d("chaosTest", "Start");
@@ -265,8 +256,8 @@ public class MainActivity extends AppCompatActivity {
                 page.putExtra("firebaseUid",firebaseUid);
                 startActivity(page);
                 return true;
-            case R.id.action_settings:
-                return true;
+//            case R.id.action_settings:
+//                return true;
             case R.id.action_logout:
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 firebaseAuth.signOut();

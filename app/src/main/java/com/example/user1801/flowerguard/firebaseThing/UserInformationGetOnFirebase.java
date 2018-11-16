@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.user1801.flowerguard.MainActivity;
 import com.example.user1801.flowerguard.localDatabase.UserInformationSharedPreferences;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,14 +32,14 @@ public class UserInformationGetOnFirebase {
         this.txEmail = txEmail;
         this.txPhone = txPhone;
         this.txAddress = txAddress;
-        databaseReference = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid);
+        databaseReference = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid).child("information");
 //        databaseReference.addChildEventListener();
     }
 
     public void updataNewInformation(String item,String value){
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put(item,value);
-        databaseReference.child("information").updateChildren(hashMap);
+        databaseReference.child("personData").updateChildren(hashMap);
     }
 
     public void addListenter() {
@@ -76,6 +78,7 @@ public class UserInformationGetOnFirebase {
     };
 
     private void getData(DataSnapshot dataSnapshot) {
+        Log.d("TEST",dataSnapshot.getValue().toString());
         JavaBeanSetPerson data = dataSnapshot.getValue(JavaBeanSetPerson.class);
         if (!TextUtils.isEmpty(data.name)) {
         txName.setText(data.name);

@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if (task.isComplete()) {
                     if (task.isSuccessful()) {
                         Uid = auth.getCurrentUser().getUid();
-                        FirebaseDatabase.getInstance().getReference("userData").child(Uid).setValue(JavaBeanSetPerson);
+                        FirebaseDatabase.getInstance().getReference("userData").child(Uid).child("information").child("personData").setValue(JavaBeanSetPerson);
                         new AlertDialog.Builder(RegisterActivity.this).setMessage(JavaBeanSetPerson.getName()+" ,新帳號註冊成功囉\n自動轉換頁面中..").setPositiveButton("OK", null).show();
                         Log.d("CreateUser", "Uid：" + Uid);
 

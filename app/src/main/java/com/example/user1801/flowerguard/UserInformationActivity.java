@@ -109,6 +109,7 @@ public class UserInformationActivity extends Activity {
                     break;
                 case R.id.change_Email:
                     titleText.setText("Email");
+                    editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                     editText.setText(show_Email.getText());
                     alertDialog.setView(addNewView)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -183,6 +184,7 @@ public class UserInformationActivity extends Activity {
                     break;
                 case R.id.change_Address:
                     titleText.setText("地址");
+                    editText.setInputType(InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS);
                     editText.setText(show_Address.getText());
                     alertDialog.setView(addNewView)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {

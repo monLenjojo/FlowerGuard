@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -123,7 +124,13 @@ public class ChaosWithBluetooth {
     public boolean connect(String MAC,Context context){
         device = adapter.getRemoteDevice(MAC);
         try {
-            socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+
+            int sdk = Integer.parseInt(Build.VERSION.SDK);
+            if (sdk >= 10) {
+                socket = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+            }else {
+                socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+            }
             socket.connect();
             return true;
         } catch (IOException e) {

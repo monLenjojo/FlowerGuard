@@ -2,58 +2,52 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_bluetooth"
+        android:icon="@drawable/ic_bluetooth_gray_24dp"
+        android:title="Bluetooth"
+        app:showAsAction="always" />
+    <item
         android:icon="@drawable/ic_expand_more_gray_24dp"
         android:title="mini"
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/action_bluetooth"
-                android:icon="@drawable/ic_bluetooth_black_24dp"
-                android:orderInCategory="10"
-                android:title="Bluetooth"
-                app:showAsAction="ifRoom" />
-            <item
                 android:id="@+id/action_lock"
                 android:icon="@drawable/ic_lock_black_24dp"
-                android:orderInCategory="10"
                 android:title="@string/action_Lock"
-                app:showAsAction="ifRoom" />
+                app:showAsAction="never" />
             <item
                 android:id="@+id/action_history"
                 android:icon="@drawable/ic_date_range_black_24dp"
-                android:orderInCategory="10"
                 android:title="@string/action_Date"
-                app:showAsAction="ifRoom" />
+                app:showAsAction="never" />
             <item
                 android:id="@+id/action_share"
                 android:icon="@drawable/ic_share_black_24dp"
-                android:orderInCategory="10"
                 android:title="@string/action_Share"
-                app:showAsAction="ifRoom" />
+                app:showAsAction="never" />
             <item
                 android:id="@+id/action_camera"
                 android:icon="@drawable/ic_videocam_black_24dp"
-                android:orderInCategory="10"
                 android:title="@string/action_Camera"
-                app:showAsAction="ifRoom" />
+                app:showAsAction="never" />
             <item
-                android:id="@+id/action_account"
-                android:icon="@drawable/ic_person_black_24dp"
-                android:orderInCategory="10"
-                android:title="@string/action_account"
-                app:showAsAction="ifRoom" />
-            <item
-                android:id="@+id/action_settings"
                 android:icon="@drawable/ic_settings_black_24dp"
-                android:orderInCategory="10"
                 android:title="@string/action_settings"
-                app:showAsAction="never" />
-            <item
-                android:id="@+id/action_logout"
-                android:icon="@drawable/ic_directions_walk_black_24dp"
-                android:orderInCategory="10"
-                android:title="@string/action_signout"
-                app:showAsAction="never" />
+                app:showAsAction="never">
+                <menu>
+                    <item
+                        android:id="@+id/action_account"
+                        android:icon="@drawable/ic_person_black_24dp"
+                        android:title="@string/action_account"
+                        app:showAsAction="never" />
+                    <item
+                        android:id="@+id/action_logout"
+                        android:icon="@drawable/ic_directions_walk_black_24dp"
+                        android:title="@string/action_signout"
+                        app:showAsAction="never" />
+                </menu>
+            </item>
         </menu>
     </item>
 </menu>

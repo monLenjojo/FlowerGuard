@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,9 +34,9 @@ public class AddDevice {
         this.firebaseID = firebaseID;
         this.context=context;
         databaseReference = FirebaseDatabase.getInstance().getReference("allDeviceList").child(deviceID);
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 JavaBeanSetAllDeviceList data = dataSnapshot.getValue(JavaBeanSetAllDeviceList.class);
                 if (data.getOnUsed().compareTo("0")==0) {
                     //check the device is not used,call add
@@ -45,6 +47,21 @@ public class AddDevice {
             }
 
             @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
@@ -52,10 +69,8 @@ public class AddDevice {
     }
 
     private void addDeviceToUsedList(String key,String mac) {
-        Map data = new HashMap<String,String>();
-        data.put("key",key);
-        data.put("mac",mac);
-        FirebaseDatabase.getInstance().getReference("deviceOnUsedList").child(firebaseID).child(deviceID).setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+        FirebaseDatabase.getInstance().getReference("deviceOnUsedList").child(firebaseID).child(deviceID).child("deviceData")
+                .setValue(new JavaBeanSetOnUsedDeviceList(key,mac)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isComplete()) {
@@ -76,12 +91,12 @@ public class AddDevice {
                     if (task.isSuccessful()) {
                         Map data = new HashMap<String,String>();
                         data.put("onUsed","1");
-                        databaseReference.updateChildren(data).addOnCompleteListener(new OnCompleteListener() {
+                        databaseReference.child("deviceData").updateChildren(data).addOnCompleteListener(new OnCompleteListener() {
                             @Override
                             public void onComplete(@NonNull Task task) {
                                 if (task.isComplete()) {
                                     if (task.isSuccessful()) {
-                                        new AlertDialog.Builder(context).setMessage(task.toString()+"is OK").show();
+                                        new AlertDialog.Builder(context).setMessage(deviceName+" is belong to you, enjoy!").show();
                                     }
                                 }
                             }
