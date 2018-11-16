@@ -1,5 +1,6 @@
 package com.example.user1801.flowerguard;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +55,9 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         );
+        Intent intent = getIntent();
+        ed_mEmail.setText("" + intent.getStringExtra("email"));
+        ed_mPassword.setText("" + intent.getStringExtra("password"));
         auth = FirebaseAuth.getInstance();
     }
 
@@ -103,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (!TextUtils.isEmpty(ckPassword)) {
-            if (!ckPassword.contains(mPassword)) {
+            if (ckPassword.compareTo(mPassword)!=0) {
                 ed_ckPassword.setError("確認密碼錯誤");
                 focusView = ed_ckPassword;
                 checkData = false;
@@ -133,7 +137,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (checkData) {
-            //DataGetInFirebase
+            //MainActivity
             JavaBeanSetPerson = new JavaBeanSetPerson(name, phone, address, mEmail);
             registerWithEmail(mEmail, mPassword);
         } else {
@@ -148,9 +152,9 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isComplete()) {
                     if (task.isSuccessful()) {
+                        Uid = auth.getCurrentUser().getUid();
                         FirebaseDatabase.getInstance().getReference("userData").child(Uid).setValue(JavaBeanSetPerson);
                         new AlertDialog.Builder(RegisterActivity.this).setMessage(JavaBeanSetPerson.getName()+" ,新帳號註冊成功囉\n自動轉換頁面中..").setPositiveButton("OK", null).show();
-                        Uid = auth.getCurrentUser().getUid();
                         Log.d("CreateUser", "Uid：" + Uid);
 
                         RegisterActivity.this.finish();

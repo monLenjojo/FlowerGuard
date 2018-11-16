@@ -270,10 +270,10 @@ public class ChaosWithBluetooth {
         return socket != null;
     }
 
-    private void tryHOLTEKmathLoop(float val) {
+    public void tryHOLTEKmathLoop(Context context) {
         float x1;
         testNum++;
-        if(testNum >= 100){
+        if(testNum >= 30){
             return;
         }
         try {
@@ -285,6 +285,7 @@ public class ChaosWithBluetooth {
         ieee754Write(getU1());
         x1 = getX1();
         Log.d("chaosTest", "u1\t"+getU1()+"\tx1\t"+getX1());
-        ieee754Write(x1);mathLoop(val);
+        ieee754Write(x1);
+        tryHOLTEKmathLoop(context);
     }
 }

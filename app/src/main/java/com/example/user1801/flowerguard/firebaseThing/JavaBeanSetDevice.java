@@ -1,22 +1,18 @@
 package com.example.user1801.flowerguard.firebaseThing;
 
 public class JavaBeanSetDevice {
-    String deviceName;
-    String deviceKey;
-    String module;
-    String owner;
-    String firebaseUid;
+    private String deviceID;
+    private String deviceName;
+    private String deviceModule;
 
     public JavaBeanSetDevice() {
         super();
     }
 
-    public JavaBeanSetDevice(String deviceName, String deviceKey, String module, String owner, String firebaseUid) {
+    public JavaBeanSetDevice(String deviceName, String deviceID, String deviceModule) {
         this.deviceName = deviceName;
-        this.deviceKey = deviceKey;
-        this.module = module;
-        this.owner = owner;
-        this.firebaseUid = firebaseUid;
+        this.deviceID = deviceID;
+        this.deviceModule = deviceModule;
     }
 
     public String getDeviceName() {
@@ -27,27 +23,19 @@ public class JavaBeanSetDevice {
         this.deviceName = deviceName;
     }
 
-    public String getDeviceKey() {
-        return deviceKey;
+    public String getDeviceID() {
+        return deviceID;
     }
 
-    public void setDeviceKey(String deviceKey) {
-        this.deviceKey = deviceKey;
+    public void setDeviceID(String deviceID) {
+        this.deviceID = deviceID;
     }
 
-    public String getModule() {
-        return module;
+    public String getDeviceModule() {
+        return deviceModule;
     }
 
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setDeviceModule(String deviceModule) {
+        this.deviceModule = deviceModule;
     }
 }
