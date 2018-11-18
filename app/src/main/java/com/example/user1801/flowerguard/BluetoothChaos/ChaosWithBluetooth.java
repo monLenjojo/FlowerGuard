@@ -1,9 +1,10 @@
-package com.example.user1801.flowerguard.BluetoothChaos;
+package com.example.user1801.flowerguard.bluetoothChaos;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,7 +29,7 @@ public class ChaosWithBluetooth {
     private float y1s, y2s, y3s;
     private int testNum;
     BluetoothAdapter adapter;
-    BluetoothDevice device;
+    BluetoothDevice device = null;
     BluetoothSocket socket;
     OutputStream write;
     InputStream read;
@@ -37,6 +38,7 @@ public class ChaosWithBluetooth {
 
     public ChaosWithBluetooth(){
         adapter = BluetoothAdapter.getDefaultAdapter();
+        socket = null;
         initailizeChaos();
         initializeBluetooth();
     }
@@ -120,15 +122,21 @@ public class ChaosWithBluetooth {
         return adapter.enable();
     }
 
-    public boolean connect(String MAC){
+    public boolean connect(String MAC,Context context){
         device = adapter.getRemoteDevice(MAC);
         try {
-            socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+            int sdk = Integer.parseInt(Build.VERSION.SDK);
+            if (sdk >= 10) {
+                socket = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+            }else {
+                socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+            }
             socket.connect();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("BluetoothConnect","connect error, "+e);
+            Toast.makeText(context, "Connect fail", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
@@ -143,31 +151,31 @@ public class ChaosWithBluetooth {
     }
 
     public void ieee754Write(float val) {
-        int sendUm = Float.floatToIntBits(val);
-        Log.i(log, "sendUm = " + sendUm);
+        int sendVal = Float.floatToIntBits(val);
+        Log.i(log, "sendVal = " + sendVal);
         int f1 = Integer.parseInt(strSet), f2 = Integer.parseInt(strSet), f3 = Integer.parseInt(strSet), f4 = Integer.parseInt(strSet), f5 = Integer.parseInt(strSet), f6 = Integer.parseInt(strSet), f7 = Integer.parseInt(strSet), f8 = Integer.parseInt(strSet), f9 = Integer.parseInt(strSet), f10 = Integer.parseInt(strSet), f11 = Integer.parseInt(strSet);
         byte us[] = new byte[11];
-        us[0] = (byte) ((sendUm & 0xe0000000) >>> 29);
+        us[0] = (byte) ((sendVal & 0xe0000000) >>> 29);
         f1 = us[0];
-        us[1] = (byte) ((sendUm & 0x1c000000) >>> 26);
+        us[1] = (byte) ((sendVal & 0x1c000000) >>> 26);
         f2 = us[1];
-        us[2] = (byte) ((sendUm & 0x03800000) >>> 23);
+        us[2] = (byte) ((sendVal & 0x03800000) >>> 23);
         f3 = us[2];
-        us[3] = (byte) ((sendUm & 0x00700000) >>> 20);
+        us[3] = (byte) ((sendVal & 0x00700000) >>> 20);
         f4 = us[3];
-        us[4] = (byte) ((sendUm & 0x000e0000) >>> 17);
+        us[4] = (byte) ((sendVal & 0x000e0000) >>> 17);
         f5 = us[4];
-        us[5] = (byte) ((sendUm & 0x0001c000) >>> 14);
+        us[5] = (byte) ((sendVal & 0x0001c000) >>> 14);
         f6 = us[5];
-        us[6] = (byte) ((sendUm & 0x00003800) >>> 11);
+        us[6] = (byte) ((sendVal & 0x00003800) >>> 11);
         f7 = us[6];
-        us[7] = (byte) ((sendUm & 0x00000700) >>> 8);
+        us[7] = (byte) ((sendVal & 0x00000700) >>> 8);
         f8 = us[7];
-        us[8] = (byte) ((sendUm & 0x000000e0) >>> 5);
+        us[8] = (byte) ((sendVal & 0x000000e0) >>> 5);
         f9 = us[8];
-        us[9] = (byte) ((sendUm & 0x0000001c) >>> 2);
+        us[9] = (byte) ((sendVal & 0x0000001c) >>> 2);
         f10 = us[9];
-        us[10] = (byte) ((sendUm & 0x00000003));
+        us[10] = (byte) ((sendVal & 0x00000003));
         f11 = us[10];
         try {
             OutputStream os = socket.getOutputStream();
@@ -225,6 +233,7 @@ public class ChaosWithBluetooth {
         }
         return floatS;
     }
+
     private void mathLoop(float val) {
         float x1;
 //        Log.d("chaosTest", "Start");
@@ -266,5 +275,24 @@ public class ChaosWithBluetooth {
 
     public boolean isConnect(){
         return socket != null;
+    }
+
+    public void tryHOLTEKmathLoop(Context context) {
+        float x1;
+        testNum++;
+        if(testNum >= 30){
+            return;
+        }
+        try {
+            // Simulate network access.
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+        }
+        chaosMath();
+        ieee754Write(getU1());
+        x1 = getX1();
+        Log.d("chaosTest", "u1\t"+getU1()+"\tx1\t"+getX1());
+        ieee754Write(x1);
+        tryHOLTEKmathLoop(context);
     }
 }

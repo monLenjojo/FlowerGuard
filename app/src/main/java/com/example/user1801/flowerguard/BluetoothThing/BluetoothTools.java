@@ -1,4 +1,4 @@
-package com.example.user1801.flowerguard.BluetoothThing;
+package com.example.user1801.flowerguard.bluetoothThing;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

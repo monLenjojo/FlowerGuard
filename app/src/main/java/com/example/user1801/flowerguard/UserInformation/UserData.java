@@ -1,4 +1,4 @@
-package com.example.user1801.flowerguard.UserInformation;
+package com.example.user1801.flowerguard.userInformation;
 
 public class UserData {
     String name;

@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 page.putExtra("firebaseUid",firebaseUser.getUid());
                 page.putExtra("userEmail",firebaseUser.getEmail());
                 startActivity(page);
-//                LoginActivity.this.finish();
+                LoginActivity.this.finish();
             }
         }
     };
@@ -84,11 +84,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("FirebaseLogIn", "null");
                 new AlertDialog.Builder(LoginActivity.this)
                         .setTitle("Go register")
-                        .setMessage("Not find the user data,do you want create a new account new ?")
+                        .setMessage("Not find the user,do you want create a new account new ?")
                         .setPositiveButton("GO", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent page = new Intent(LoginActivity.this, RegisterActivity.class);
+                                page.putExtra("email",mEmailView.getText().toString());
+                                page.putExtra("password",mPasswordView.getText().toString());
                                 startActivity(page);
                             }
                         }).setNegativeButton("cancel", null).show();
@@ -145,17 +147,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-//
-//        Intent page = new Intent(LoginActivity.this,MainActivity.class);
-//        startActivity(page);
-//        LoginActivity.this.finish();
     }
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
         }
-
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -215,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;//目前畫面鎖定或點選的物件
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;

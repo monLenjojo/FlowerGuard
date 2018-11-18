@@ -1,9 +1,8 @@
-package com.example.user1801.flowerguard.ListAdapter;
+package com.example.user1801.flowerguard.listAdapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -16,7 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class firebase {
+public class DataGetInFirebase {
     Context context;
     ListView listView;
     String firebaseUid;
@@ -24,7 +23,7 @@ public class firebase {
     ArrayList<JavaBeanAdapter> arrayList = new ArrayList<JavaBeanAdapter>();
     MyAdapter myAdapter;
 
-    public firebase(Context context, ListView listView,String firebaseUid) {
+    public DataGetInFirebase(Context context, ListView listView, String firebaseUid) {
         this.context = context;
         this.listView = listView;
         this.firebaseUid = firebaseUid;

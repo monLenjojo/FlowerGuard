@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Python"
+                    android:text="載入中..."
                     android:textAlignment="viewStart" />
             </LinearLayout>
 
@@ -139,7 +139,7 @@
                     android:id="@+id/ed_Email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="AeMa@gmail.com" />
+                    android:text="載入中..." />
             </LinearLayout>
 
             <LinearLayout
@@ -187,7 +187,7 @@
                     android:id="@+id/ed_Phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="0978123456" />
+                    android:text="載入中..." />
 
             </LinearLayout>
 
@@ -237,7 +237,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="9"
-                    android:text="火星市火山區石頭里沙子路123號" />
+                    android:text="載入中..." />
 
             </LinearLayout>
 
