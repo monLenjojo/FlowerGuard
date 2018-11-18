@@ -35,13 +35,9 @@ import android.widget.Toast;
 
 import com.example.user1801.flowerguard.bluetoothChaos.ChaosWithBluetooth;
 import com.example.user1801.flowerguard.bluetoothThing.BluetoothTools;
-import com.example.user1801.flowerguard.chaosThing.ChaosMath;
 import com.example.user1801.flowerguard.firebaseThing.AddDevice;
 import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
-import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetAllDeviceList;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetDevice;
-import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetPerson;
-import com.example.user1801.flowerguard.firebaseThing.ShareDevicePermission;
 import com.example.user1801.flowerguard.listAdapter.DataGetInFirebase;
 import com.example.user1801.flowerguard.localDatabase.UserInformationSharedPreferences;
 import com.google.android.gms.tasks.OnFailureListener;
