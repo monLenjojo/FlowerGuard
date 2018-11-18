@@ -29,7 +29,7 @@ public class ChaosWithBluetooth {
     private float y1s, y2s, y3s;
     private int testNum;
     BluetoothAdapter adapter;
-    BluetoothDevice device;
+    BluetoothDevice device = null;
     BluetoothSocket socket;
     OutputStream write;
     InputStream read;
@@ -38,6 +38,7 @@ public class ChaosWithBluetooth {
 
     public ChaosWithBluetooth(){
         adapter = BluetoothAdapter.getDefaultAdapter();
+        socket = null;
         initailizeChaos();
         initializeBluetooth();
     }
@@ -124,7 +125,6 @@ public class ChaosWithBluetooth {
     public boolean connect(String MAC,Context context){
         device = adapter.getRemoteDevice(MAC);
         try {
-
             int sdk = Integer.parseInt(Build.VERSION.SDK);
             if (sdk >= 10) {
                 socket = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);

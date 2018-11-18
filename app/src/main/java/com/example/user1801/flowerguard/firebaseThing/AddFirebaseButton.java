@@ -1,12 +1,9 @@
 package com.example.user1801.flowerguard.firebaseThing;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.user1801.flowerguard.bluetoothChaos.ChaosWithBluetooth;
 import com.google.firebase.database.ChildEventListener;
@@ -15,24 +12,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class AddFirebaseButton {
     Context context;
     String firebaseUid;
-    LinearLayout linearLayoutLock;
     int dynamicButtonNum = 0;
-    ChaosWithBluetooth tryConnectHoltek;
+    ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
 
-    public AddFirebaseButton(Context context, String firebaseUid, LinearLayout linearLayoutLock, ChaosWithBluetooth chaosWithBluetooth) {
+    public AddFirebaseButton(Context context, String firebaseUid) {
         this.context = context;
         this.firebaseUid = firebaseUid;
-        this.linearLayoutLock = linearLayoutLock;
-        tryConnectHoltek = chaosWithBluetooth;
     }
 
-    public void dataReference() {
+    public void dataReference(final LinearLayout linearLayoutLock) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -47,7 +38,112 @@ public class AddFirebaseButton {
                         newButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                new LockButtonFuction(context,firebaseUid,data.getDeviceID(),tryConnectHoltek);
+                                new LockButtonFuction(context, firebaseUid, data.getDeviceID());
+                            }
+                        });
+                        linearLayoutLock.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                linearLayoutLock.addView(newButton);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void getShareDataReference(final LinearLayout linearLayoutLock) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference("shareList/" + firebaseUid).child("deviceData");
+                firebaseListener.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        final JavaBeanSetShareList data = dataSnapshot.getValue(JavaBeanSetShareList.class);
+                        final Button newButton = new Button(context);
+                        newButton.setText(data.getDeviceName());
+                        newButton.setId(Integer.parseInt(data.getDeviceID()));
+                        newButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                linearLayoutLock.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (chaosWithBluetooth.connect(data.getMac(), context)) {
+                                            chaosWithBluetooth.tryHOLTEKmathLoop(context);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        linearLayoutLock.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                linearLayoutLock.addView(newButton);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void setShareDataReference(final LinearLayout linearLayoutLock, final String result) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DatabaseReference firebaseListener = FirebaseDatabase.getInstance().getReference("userData/" + firebaseUid).child("myDevice");
+                firebaseListener.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        final JavaBeanSetDevice data = dataSnapshot.getValue(JavaBeanSetDevice.class);
+                        final Button newButton = new Button(context);
+                        newButton.setText(data.getDeviceName());
+                        newButton.setId(Integer.parseInt(data.getDeviceID()));
+                        newButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new ShareDevicePermission(firebaseUid, result, data.getDeviceID(), data.getDeviceName());
                             }
                         });
                         linearLayoutLock.post(new Runnable() {

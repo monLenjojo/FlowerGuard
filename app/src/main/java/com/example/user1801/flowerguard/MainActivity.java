@@ -1,9 +1,15 @@
 package com.example.user1801.flowerguard;
 
+import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,8 +27,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user1801.flowerguard.bluetoothChaos.ChaosWithBluetooth;
@@ -32,6 +41,7 @@ import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetAllDeviceList;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetDevice;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetPerson;
+import com.example.user1801.flowerguard.firebaseThing.ShareDevicePermission;
 import com.example.user1801.flowerguard.listAdapter.DataGetInFirebase;
 import com.example.user1801.flowerguard.localDatabase.UserInformationSharedPreferences;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -43,16 +53,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity {
 
     String log = "ImageButtonListener";
-    FirebaseDatabase firebaseDatabase;
     FirebaseUser firebaseAuth;
-    DatabaseReference databaseReference;
-    ChaosMath chaosMath;
     BluetoothTools a;
-    LinearLayout linearLayoutLock, linearLayoutCamera, linearLayoutHistory, linearLayoutShare;
+    LinearLayout linearLayoutLock, linearLayoutCamera, linearLayoutHistory, linearLayoutShare,linearLayoutLockMy,linearLayoutLockShare;
     ChaosWithBluetooth chaosWithBluetooth;
     String checkBoxString;
     private String firebaseUid, userName, userEmail;
@@ -73,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 addNewDevice();
             }
         });
-//        fab.setVisibility(View.GONE);
-//        firebaseDatabase = FirebaseDatabase.getInstance();
         Intent page= getIntent();
         firebaseUid = page.getStringExtra("firebaseUid");
         userEmail = page.getStringExtra("userEmail");
@@ -82,13 +95,10 @@ public class MainActivity extends AppCompatActivity {
         firebaseUid = firebaseAuth.getUid();
         userEmail = firebaseAuth.getEmail();
         findView();
-        chaosWithBluetooth = new ChaosWithBluetooth();
-        AddFirebaseButton addFirebaseButton = new AddFirebaseButton(this,firebaseUid,linearLayoutLock,chaosWithBluetooth);
-        addFirebaseButton.dataReference();
+        AddFirebaseButton addFirebaseButton = new AddFirebaseButton(this,firebaseUid);
+        addFirebaseButton.dataReference(linearLayoutLockMy);
+        addFirebaseButton.getShareDataReference(linearLayoutLockShare);
         ListView historyList = findViewById(R.id.listView_historyList);
-//        DisplayMetrics displayMetrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-//        historyList.setDividerHeight(400);
         DataGetInFirebase = new DataGetInFirebase(this, historyList, firebaseUid);
         DataGetInFirebase.refreshData();
 }
@@ -96,6 +106,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        ImageView ivCode = (ImageView) findViewById(R.id.mQRCodeImg);
+        BarcodeEncoder encoder = new BarcodeEncoder();
+        try {
+            Bitmap bit = encoder.encodeBitmap(firebaseUid, BarcodeFormat.QR_CODE,
+                    250, 250);
+            ivCode.setImageBitmap(bit);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
 //        SharedPreferences sharedPreferences = getSharedPreferences("userInformation",MODE_PRIVATE);
 //        final UserInformationSharedPreferences updataUserLocalInfo = new UserInformationSharedPreferences(sharedPreferences);
 //        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid).child("information");
@@ -170,6 +190,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void findView() {
         linearLayoutLock = findViewById(R.id.lockButtonLayout);
+        linearLayoutLockMy = findViewById(R.id.linearLayoutLockMy);
+        linearLayoutLockShare = findViewById(R.id.linearLayoutLockShare);
         linearLayoutCamera = findViewById(R.id.cameraButtonLayout);
         linearLayoutHistory = findViewById(R.id.historyButtonLayout);
         linearLayoutShare = findViewById(R.id.shareButtonLayout);
@@ -325,6 +347,38 @@ public class MainActivity extends AppCompatActivity {
             Log.e("CheckBox", "choose： " + checkBoxString);
         }
     };
+
+    public void buttonOnClick(View view) {
+        Intent i = new Intent("la.droid.qr.scan");    //使用QRDroid的掃描功能
+        i.putExtra("la.droid.qr.complete", true);   //完整回傳，不截掉scheme
+        try {
+            //開啟 QRDroid App 的掃描功能，等待 call back onActivityResult()
+            startActivityForResult(i, 0);
+        } catch (ActivityNotFoundException ex) {
+            //若沒安裝 QRDroid，則開啟 Google Play商店，並顯示 QRDroid App
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=la.droid.qr"));
+            startActivity(intent);
+        }
+    }
+    ImageView mQRCodeImg;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+            if( 0==requestCode && null!=data && data.getExtras()!=null ) {
+                //掃描結果存放在 key 為 la.droid.qr.result 的值中
+                String result = data.getExtras().getString("la.droid.qr.result");
+//                Log.d("TEST",result);
+//                TextView a = findViewById(R.id.textView);
+//                a.setText(result);  //將結果顯示在 TextVeiw 中
+//                new ShareDevicePermission(firebaseUid,result);
+
+                Intent shareToPage = new Intent(MainActivity.this,shareToActivity.class);
+                shareToPage.putExtra("firebaseUid",result);
+                shareToPage.putExtra("myFirebaseUid",firebaseUid);
+                startActivity(shareToPage);
+            }
+    }
+
 
     @Override
     protected void onStop() {

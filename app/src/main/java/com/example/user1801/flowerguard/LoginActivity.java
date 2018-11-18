@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 page.putExtra("firebaseUid",firebaseUser.getUid());
                 page.putExtra("userEmail",firebaseUser.getEmail());
                 startActivity(page);
-//                LoginActivity.this.finish();
+                LoginActivity.this.finish();
             }
         }
     };

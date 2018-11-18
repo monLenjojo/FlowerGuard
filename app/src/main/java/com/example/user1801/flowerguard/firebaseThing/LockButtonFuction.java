@@ -1,5 +1,6 @@
 package com.example.user1801.flowerguard.firebaseThing;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,27 +12,26 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 public class LockButtonFuction {
     private Context context;
     private String firebaseUid;
     private String deviceID;
-    ChaosWithBluetooth tryConnectHoltek;
+    ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
     public LockButtonFuction() {
         super();
     }
 
-    public LockButtonFuction(Context context, String firebaseUid, String deviceID, ChaosWithBluetooth chaosWithBluetooth) {
+    public LockButtonFuction(Context context, String firebaseUid, String deviceID) {
         this.context = context;
         this.firebaseUid = firebaseUid;
         this.deviceID = deviceID;
-        tryConnectHoltek=chaosWithBluetooth;
-        Log.d("TEST",deviceID);
         FirebaseDatabase.getInstance().getReference("deviceOnUsedList").child(firebaseUid).child(deviceID).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 JavaBeanSetOnUsedDeviceList data = dataSnapshot.getValue(JavaBeanSetOnUsedDeviceList.class);
-                Log.d("TEST",data.getKey()+" // "+data.getMac());
+                Log.d("TEST","Key："+ data.getKey()+"\tMac："+data.getMac());
                 start(data.getMac(),data.getKey());
             }
 
@@ -58,12 +58,14 @@ public class LockButtonFuction {
     }
 
     private void start(String mac, String key) {
-        ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
         if (!chaosWithBluetooth.isConnect()) {
-            chaosWithBluetooth.connect(mac, context);
-        }
-        if (chaosWithBluetooth.isConnect()) {
-        chaosWithBluetooth.tryHOLTEKmathLoop(context);
+            if (chaosWithBluetooth.connect(mac, context)){
+                chaosWithBluetooth.tryHOLTEKmathLoop(context);
+            }
+        }else {
+            if (chaosWithBluetooth.isConnect()) {
+                chaosWithBluetooth.tryHOLTEKmathLoop(context);
+            }
         }
     }
 }
