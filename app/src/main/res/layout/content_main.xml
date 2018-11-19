@@ -19,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/linearLayoutLockMy"
@@ -61,19 +62,32 @@
             android:id="@+id/cameraButtonLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:gravity="center_vertical|center_horizontal|center"
+            android:orientation="vertical">
+
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="wrap_content"
+                android:layout_height="250sp" />
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/videoButton"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:background="@android:color/transparent"
+                android:onClick="videoButtonOnClick"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_play_circle_filled_black_24dp" />
+
+            <EditText
+                android:id="@+id/rtspUrl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/icon_camera" />
+                android:ems="10"
+                android:hint="URL"
+                android:inputType="textPersonName"
+                android:textAlignment="viewStart" />
 
-            <WebView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
         </LinearLayout>
 
         <LinearLayout

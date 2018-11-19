@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.example.user1801.flowerguard.bluetoothChaos.ChaosWithBluetooth;
 import com.example.user1801.flowerguard.bluetoothThing.BluetoothTools;
@@ -374,6 +375,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(shareToPage);
             }
     }
+
+    public void videoButtonOnClick(View view){
+        VideoView videoView = findViewById(R.id.videoView);
+        ImageButton videoButton = findViewById(R.id.videoButton);
+        EditText rtspUrl = findViewById(R.id.rtspUrl);
+            videoView.setVideoURI(Uri.parse(rtspUrl.getText().toString()));
+            videoView.requestFocus();
+            videoView.start();
+
+    }
+
 
 
     @Override

@@ -15,7 +15,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class AddFirebaseButton {
     Context context;
     String firebaseUid;
-    int dynamicButtonNum = 0;
     ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
 
     public AddFirebaseButton(Context context, String firebaseUid) {
