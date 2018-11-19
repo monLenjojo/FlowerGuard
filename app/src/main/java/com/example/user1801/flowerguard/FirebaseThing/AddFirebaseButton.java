@@ -16,11 +16,11 @@ public class AddFirebaseButton {
     Context context;
     String firebaseUid;
     int dynamicButtonNum = 0;
-    ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
-
+    LockButtonFuction lockButtonFuction;
     public AddFirebaseButton(Context context, String firebaseUid) {
         this.context = context;
         this.firebaseUid = firebaseUid;
+        lockButtonFuction = new LockButtonFuction(context);
     }
 
     public void dataReference(final LinearLayout linearLayoutLock) {
@@ -38,7 +38,8 @@ public class AddFirebaseButton {
                         newButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                new LockButtonFuction(context, firebaseUid, data.getDeviceID());
+                                lockButtonFuction.set(firebaseUid,data.getDeviceID());
+                                lockButtonFuction.getLockDataToStart();
                             }
                         });
                         linearLayoutLock.post(new Runnable() {
@@ -90,8 +91,10 @@ public class AddFirebaseButton {
                                 linearLayoutLock.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
                                         if (chaosWithBluetooth.connect(data.getMac(), context)) {
                                             chaosWithBluetooth.tryHOLTEKmathLoop(context);
+                                            chaosWithBluetooth.setConnectState();
                                         }
                                     }
                                 });

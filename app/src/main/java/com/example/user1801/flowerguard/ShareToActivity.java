@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
 import com.example.user1801.flowerguard.firebaseThing.ShareDevicePermission;
 
-public class shareToActivity extends AppCompatActivity {
+public class ShareToActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
