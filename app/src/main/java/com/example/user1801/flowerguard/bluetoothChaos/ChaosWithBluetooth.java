@@ -276,11 +276,21 @@ public class ChaosWithBluetooth {
     public boolean isConnect(){
         return socket != null;
     }
+    public void setConnectState(){
+        try {
+            if (socket != null) {
+                socket.close();
+                socket = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void tryHOLTEKmathLoop(Context context) {
         float x1;
         testNum++;
-        if(testNum >= 30){
+        if(testNum >= 20){
             return;
         }
         try {

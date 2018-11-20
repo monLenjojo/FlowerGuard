@@ -41,7 +41,7 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".shareToActivity"></activity>
+        <activity android:name=".ShareToActivity"></activity>
     </application>
 
 </manifest>

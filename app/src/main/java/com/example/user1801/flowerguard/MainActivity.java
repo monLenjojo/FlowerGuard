@@ -1,23 +1,17 @@
 package com.example.user1801.flowerguard;
 
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,11 +20,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -40,24 +32,11 @@ import com.example.user1801.flowerguard.firebaseThing.AddDevice;
 import com.example.user1801.flowerguard.firebaseThing.AddFirebaseButton;
 import com.example.user1801.flowerguard.firebaseThing.JavaBeanSetDevice;
 import com.example.user1801.flowerguard.listAdapter.DataGetInFirebase;
-import com.example.user1801.flowerguard.localDatabase.UserInformationSharedPreferences;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser firebaseAuth;
     BluetoothTools a;
     LinearLayout linearLayoutLock, linearLayoutCamera, linearLayoutHistory, linearLayoutShare,linearLayoutLockMy,linearLayoutLockShare;
-    ChaosWithBluetooth chaosWithBluetooth;
     String checkBoxString;
     private String firebaseUid, userName, userEmail;
 
@@ -112,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (WriterException e) {
             e.printStackTrace();
         }
-
 //        SharedPreferences sharedPreferences = getSharedPreferences("userInformation",MODE_PRIVATE);
 //        final UserInformationSharedPreferences updataUserLocalInfo = new UserInformationSharedPreferences(sharedPreferences);
 //        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("userData").child(firebaseUid).child("information");
@@ -368,8 +345,7 @@ public class MainActivity extends AppCompatActivity {
 //                TextView a = findViewById(R.id.textView);
 //                a.setText(result);  //將結果顯示在 TextVeiw 中
 //                new ShareDevicePermission(firebaseUid,result);
-
-                Intent shareToPage = new Intent(MainActivity.this,shareToActivity.class);
+                Intent shareToPage = new Intent(MainActivity.this,ShareToActivity.class);
                 shareToPage.putExtra("firebaseUid",result);
                 shareToPage.putExtra("myFirebaseUid",firebaseUid);
                 startActivity(shareToPage);

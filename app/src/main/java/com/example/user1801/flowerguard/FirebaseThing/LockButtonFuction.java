@@ -18,15 +18,21 @@ public class LockButtonFuction {
     private Context context;
     private String firebaseUid;
     private String deviceID;
-    ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
+    private String socket;
     public LockButtonFuction() {
         super();
     }
 
-    public LockButtonFuction(Context context, String firebaseUid, String deviceID) {
-        this.context = context;
+    public LockButtonFuction(Context context) {
+        this.context =context;
+    }
+
+    public void set(String firebaseUid, String deviceID) {
         this.firebaseUid = firebaseUid;
         this.deviceID = deviceID;
+    }
+
+    public void getLockDataToStart(){
         FirebaseDatabase.getInstance().getReference("deviceOnUsedList").child(firebaseUid).child(deviceID).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -58,14 +64,18 @@ public class LockButtonFuction {
     }
 
     private void start(String mac, String key) {
-        if (!chaosWithBluetooth.isConnect()) {
-            if (chaosWithBluetooth.connect(mac, context)){
-                chaosWithBluetooth.tryHOLTEKmathLoop(context);
-            }
-        }else {
-            if (chaosWithBluetooth.isConnect()) {
-                chaosWithBluetooth.tryHOLTEKmathLoop(context);
-            }
+        ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
+        if (chaosWithBluetooth.connect(mac, context)) {
+            socket = mac;
+            chaosWithBluetooth.tryHOLTEKmathLoop(context);
+            chaosWithBluetooth.setConnectState();
+        }
+    }
+
+    public void shareButtonFuction(ChaosWithBluetooth chaosWithBluetooth,String mac, String key){
+        if (chaosWithBluetooth.connect(mac, context)) {
+            socket = mac;
+            chaosWithBluetooth.tryHOLTEKmathLoop(context);
         }
     }
 }
