@@ -15,17 +15,13 @@ import com.google.firebase.database.FirebaseDatabase;
 public class AddFirebaseButton {
     Context context;
     String firebaseUid;
-<<<<<<< Updated upstream
     int dynamicButtonNum = 0;
     LockButtonFuction lockButtonFuction;
-=======
-    ChaosWithBluetooth chaosWithBluetooth = new ChaosWithBluetooth();
-
->>>>>>> Stashed changes
     public AddFirebaseButton(Context context, String firebaseUid) {
         this.context = context;
         this.firebaseUid = firebaseUid;
         lockButtonFuction = new LockButtonFuction(context);
+
     }
 
     public void dataReference(final LinearLayout linearLayoutLock) {
