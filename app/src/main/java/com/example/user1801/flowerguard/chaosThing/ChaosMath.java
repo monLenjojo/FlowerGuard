@@ -88,26 +88,43 @@ public class ChaosMath {
     }
 
     public void chaosMath() { //手機端的混沌公式
-        g1 = -(ax1 / (ax2 * ax2));
-        g2 = (float) 2 * ax1 * dx2 / (ax2 * ax2);
-        g3 = (float) -0.1 * ax1 / ax3;
-        g4 = (float) (ax1 * (1.76 - (dx2 * dx2) / (ax2 * ax2) + 0.1 * ax1 * dx3 / ax3) + dx1);
 
-        h1 = ax2 / ax1;
-        h2 = -(ax2 * dx1) / ax1 + dx2;
+    g1 = -(ax1 / (ax2 * ax2));
+    g2 = (float) 2 * ax1 * dx2 / (ax2 * ax2);
+    g3 = (float) -0.1 * ax1 / ax3;
+    g4 = (float) (ax1 * (1.76 - (dx2 * dx2) / (ax2 * ax2) + 0.1 * ax1 * dx3 / ax3) + dx1);
 
-        j1 = ax3 / ax2;
-        j2 = -(ax3 * dx2) / ax2 + dx3;
+    h1 = ax2 / ax1;
+    h2 = -(ax2 * dx1) / ax1 + dx2;
 
-        u1 = x2 * x2 * g1 + x2 * g2 + x3 * g3 + x1 * c1 * h1 + x2 * c2 * j1 - x1 * A - x2 * c1 * A - x3 * c2 * A;
+    j1 = ax3 / ax2;
+    j2 = -(ax3 * dx2) / ax2 + dx3;
 
-        x1s = g1 * x2 * x2 + g2 * x2 + g3 * x3 + g4;
-        x2s = h1 * x1 + h2;
-        x3s = j1 * x2 + j2;
-        x1 = x1s;
-        x2 = x2s;
-        x3 = x3s;
-        Log.d("Math", "x1=：\t" + x1+"\tx1s=：\t" + x1s);
+    u1 = x2 * x2 * g1 + x2 * g2 + x3 * g3 + x1 * c1 * h1 + x2 * c2 * j1 - x1 * A - x2 * c1 * A - x3 * c2 * A;
+
+    x1s = g1 * x2 * x2 + g2 * x2 + g3 * x3 + g4;
+    x2s = h1 * x1 + h2;
+    x3s = j1 * x2 + j2;
+    x1 = x1s;
+    x2 = x2s;
+    x3 = x3s;
+    Log.d("Math", "x1=：\t" + x1+"\tx1s=：\t" + x1s);
+
+        /*g1=-ax1/(ax2*ax2);
+        g2=-0.1f*ax1/ax3;
+        g3=1.76f*ax1;
+
+        h1=ax2/ax1;
+
+        j1=ax3/ax2;
+        u1=-(g1*((y2*y2)-(x2*x2))+g2*(y3-x3)+c1*h1*(y1-x1)+c2*j1*(y2-x2)-ax2*(x2*x2)-ax3*x3-c1*h1*x1-c2*j1*x2-A*x1-A*c1*x2-A*c2*x3);
+        x1s = g1*(x2*x2)+g2*x3+g3;
+        x2s = h1*x1;
+        x3s= j1*x2;
+
+        x1=x1s;
+        x2=x2s;
+        x3=x3s;*/
     }
 
     public float getU1() {
