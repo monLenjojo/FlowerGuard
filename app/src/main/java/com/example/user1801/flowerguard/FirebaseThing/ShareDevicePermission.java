@@ -55,7 +55,7 @@ public class ShareDevicePermission{
     }
 
     private void addToShareList(JavaBeanSetOnUsedDeviceList data) {
-        shareList.setValue(new JavaBeanSetShareList(data.getKey(),data.getMac(), firebaseID,deviceName,deviceID)).addOnSuccessListener(new OnSuccessListener<Void>() {
+        shareList.setValue(new JavaBeanSetShareList(data.getKey(),data.getMac(), myFirebaseID,deviceName,deviceID)).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 myShareList.setValue(new JavaBeanSetMyShare(firebaseID,deviceID));

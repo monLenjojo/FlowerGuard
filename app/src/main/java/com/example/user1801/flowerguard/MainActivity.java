@@ -17,6 +17,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -354,20 +357,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void videoButtonOnClick(View view){
-        VideoView videoView = findViewById(R.id.videoView);
+        WebView webView = findViewById(R.id.webView);
         ImageButton videoButton = findViewById(R.id.videoButton);
-        EditText rtspUrl = findViewById(R.id.rtspUrl);
-            videoView.setVideoURI(Uri.parse(rtspUrl.getText().toString()));
-            videoView.requestFocus();
-            videoView.start();
-
+//        WebSettings wstring = webView.getSettings();
+//        wstring.setJavaScriptEnabled(true);
+//        wstring.setPluginsEnabled(true);
+        webView.loadUrl("http://192.168.1.242:8082/");//"192.168.1.242:8082"
+        String rtspUrl = "192.168.1.242:8082";
+        RtspStream(rtspUrl);
     }
 
-
-
+    private void RtspStream(String rtspUrl){
+//        videoView.setVideoURI(Uri.parse(rtspUrl));
+//        videoView.requestFocus();
+//        videoView.start();
+    }
     @Override
     protected void onStop() {
         super.onStop();
-
     }
 }

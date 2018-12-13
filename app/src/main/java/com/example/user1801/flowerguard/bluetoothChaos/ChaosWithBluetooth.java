@@ -153,7 +153,10 @@ public class ChaosWithBluetooth {
     public void ieee754Write(float val) {
         int sendVal = Float.floatToIntBits(val);
         Log.i(log, "sendVal = " + sendVal);
-        int f1 = Integer.parseInt(strSet), f2 = Integer.parseInt(strSet), f3 = Integer.parseInt(strSet), f4 = Integer.parseInt(strSet), f5 = Integer.parseInt(strSet), f6 = Integer.parseInt(strSet), f7 = Integer.parseInt(strSet), f8 = Integer.parseInt(strSet), f9 = Integer.parseInt(strSet), f10 = Integer.parseInt(strSet), f11 = Integer.parseInt(strSet);
+        int f1 = Integer.parseInt(strSet), f2 = Integer.parseInt(strSet), f3 = Integer.parseInt(strSet),
+                f4 = Integer.parseInt(strSet), f5 = Integer.parseInt(strSet), f6 = Integer.parseInt(strSet),
+                f7 = Integer.parseInt(strSet), f8 = Integer.parseInt(strSet), f9 = Integer.parseInt(strSet),
+                f10 = Integer.parseInt(strSet), f11 = Integer.parseInt(strSet);
         byte us[] = new byte[11];
         us[0] = (byte) ((sendVal & 0xe0000000) >>> 29);
         f1 = us[0];
