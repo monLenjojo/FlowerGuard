@@ -108,6 +108,23 @@ public class ChaosMath {
         x2 = x2s;
         x3 = x3s;
         Log.d("Math", "x1=：\t" + x1+"\tx1s=：\t" + x1s);
+        /*
+    g1 = -ax1/ax2;
+    g2 = -0.1f*ax1/ax3;
+    g3 = 1.76f*ax1;
+
+    h1 = ax2/ax1;
+
+    j1 = ax3/ax2;
+
+    u1 = g1*x2*x2+g2*x3+c1*h1*x1+c2*j1*x2-A*x1-A*c1*x2-A*c2*x3;
+    x1s = g1*x2*x2+g2*x3+g3;
+    x2s = h1*x1;
+    x3s = j1*x2;
+
+    x1=x1s;
+    x2=x2s;
+    x3=x3s;*/
     }
 
     public float getU1() {
